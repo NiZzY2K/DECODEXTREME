@@ -1,208 +1,196 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight, Quote, ShieldCheck } from 'lucide-react';
-import projectChair from '../assets/projectchair.jpeg';
+import { ArrowUpRight, ShieldCheck, X } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HEADLINE_LINES = ['Think.', 'Solve.', 'Compete.'];
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-const scrambleText = (element, duration = 0.65) => {
-  if (!element) return;
-
-  gsap.killTweensOf(element);
-
-  const finalText = element.dataset.aboutOriginalText || element.textContent;
-  element.dataset.aboutOriginalText = finalText;
-  const letters = [...finalText];
-  let frame = 0;
-
-  gsap.to(element, {
-    duration,
-    ease: 'power2.out',
-    onUpdate: function updateScramble() {
-      const progress = this.progress();
-      const cursor = Math.min(
-        letters.length,
-        Math.floor(progress * (letters.length + 2)),
-      );
-      frame += 1;
-      const nextText = letters
-        .map((character, index) => {
-          if (!/[A-Za-z0-9]/.test(character)) return character;
-          if (index < cursor || progress === 1) return character;
-          if (index < cursor + 2) {
-            return SCRAMBLE_CHARS[(index * 7 + frame) % SCRAMBLE_CHARS.length];
-          }
-          return character;
-        })
-        .join('');
-
-      element.textContent = nextText;
-    },
-    onComplete: () => { element.textContent = finalText; },
-  });
-};
-
-const buildScrambleReveals = (section, { mobile = false } = {}) => {
-  section.querySelectorAll('[data-about-scramble]').forEach((target, index) => {
-    const trigger = target.closest('.about-track, .about-dossier, .about-intro-fade') || target;
-    const duration = mobile ? 0.85 + (index % 3) * 0.1 : 0.55 + (index % 3) * 0.08;
-
-    ScrollTrigger.create({
-      trigger,
-      start: mobile ? 'top 72%' : 'top 80%',
-      onEnter: () => scrambleText(target, duration),
-      onEnterBack: () => scrambleText(target, duration),
-    });
-  });
-};
+// Files inside public/ are served from the site root.
+const ABOUT_BACKGROUND_IMAGE_SRC = '/backgrounds/about/animus-eaglevision-bg.jpg';
+const ABOUT_LEAD_IMAGE_SRC = '/backgrounds/about/projectchair.jpeg';
 
 const LEARNING_TRACKS = [
   {
     num: '01',
     badge: 'ALGORITHMIC VISION',
     title: 'Problem Solving Process',
-    desc: 'Learn to deconstruct complex algorithmic problems into modular steps, select optimal data structures, and stress-test boundary edge cases.',
+    desc: 'Break complex algorithmic problems into clear steps, choose suitable data structures, and test important boundary cases.',
     tag: 'Session 2 · 14 Oct',
   },
   {
     num: '02',
     badge: 'BROTHERHOOD TRIAGE',
     title: 'Team Strategy & Time Mastery',
-    desc: 'Coordinate seamlessly with your 3-member roster. Master real-time problem triage, parallel task assignment, and high-pressure contest execution.',
+    desc: 'Coordinate your three-member team, prioritise problems, divide tasks effectively, and make decisions under pressure.',
     tag: 'Session 3 · 21 Oct',
   },
   {
     num: '03',
     badge: 'THE LEAP OF FAITH',
     title: 'Contest Confidence',
-    desc: 'Put your skills to the ultimate test in the 9-hour online PreXtreme battle on HackerRank before representing at the global 24-hour IEEEXtreme 20.0 arena.',
+    desc: 'Prepare for the nine-hour online PreXtreme contest on HackerRank and build confidence for the global 24-hour IEEEXtreme arena.',
     tag: 'PreXtreme · 24 Oct',
   },
 ];
 
-const CLIP_HIDDEN = 'inset(100% 0% 0% 0%)';
-const CLIP_SHOWN = 'inset(0% 0% 0% 0%)';
+const scrambleRuns = new WeakMap();
 
-/* -------------------------------------------------------------------------
-   DESKTOP: one pinned stage, one scrubbed timeline.
-   Scroll down  -> the timeline plays forward (things appear)
-   Scroll up    -> the same timeline plays backward (things disappear)
-   ------------------------------------------------------------------------- */
-const buildPinnedSequence = (section, q) => {
-  const tracks = q('.about-track');
-  const progress = q('.about-rail-progress');
+/** Animate a separate state object so the scramble tween never conflicts with GSAP reveals. */
+const scrambleText = (element, duration = 0.6) => {
+  if (!element) return;
 
-  gsap.set(progress, { scaleY: 0, transformOrigin: 'top center' });
+  const finalText = element.dataset.aboutOriginalText || element.textContent;
+  element.dataset.aboutOriginalText = finalText;
+  scrambleRuns.get(element)?.kill();
 
-  const tl = gsap.timeline({
-    defaults: { ease: 'power3.out' },
-    scrollTrigger: {
-      trigger: section,
-      start: 'top top',
-      end: () => `+=${window.innerHeight * 3.2}`,
-      pin: true,
-      scrub: 0.8,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      refreshPriority: 2,
+  const characters = [...finalText];
+  const state = { progress: 0 };
+  let frame = 0;
+
+  const tween = gsap.to(state, {
+    progress: 1,
+    duration,
+    ease: 'power2.out',
+    onUpdate: () => {
+      const cursor = Math.min(characters.length, Math.floor(state.progress * (characters.length + 2)));
+      frame += 1;
+
+      element.textContent = characters
+        .map((character, index) => {
+          if (!/[A-Za-z0-9]/.test(character)) return character;
+          if (index < cursor || state.progress === 1) return character;
+          if (index < cursor + 2) return SCRAMBLE_CHARS[(index * 7 + frame) % SCRAMBLE_CHARS.length];
+          return character;
+        })
+        .join('');
+    },
+    onComplete: () => {
+      element.textContent = finalText;
     },
   });
 
-  // 1. Eyebrow + headline (masked line reveal)
-  tl.from(q('.about-eyebrow-line'), { scaleX: 0, transformOrigin: 'left center', duration: 0.7, ease: 'power2.inOut' }, 0)
-    .from(q('.about-eyebrow-text'), { autoAlpha: 0, x: -24, duration: 0.6 }, 0.1)
-    .from(q('.about-kicker'), { autoAlpha: 0, y: 16, duration: 0.5 }, 0.4)
-    .from(q('.about-headline-word'), { yPercent: 115, duration: 0.9, stagger: 0.18, ease: 'power4.out' }, 0.5)
-
-    // 2. Supporting copy, CTA, access note
-    .from(q('.about-intro-fade'), { autoAlpha: 0, y: 28, duration: 0.6, stagger: 0.2 }, 1.2)
-
-    // 3. Organizer card: card lifts in, photo is unmasked and settles
-    .from(q('.about-dossier'), { autoAlpha: 0, y: 64, duration: 0.9 }, 1.5)
-    .fromTo(
-      q('.about-dossier-reveal'),
-      { clipPath: CLIP_HIDDEN },
-      { clipPath: CLIP_SHOWN, duration: 1.1, ease: 'power4.inOut' },
-      1.6,
-    )
-    .from(q('.about-dossier-img'), { scale: 1.35, duration: 1.4, ease: 'power2.out' }, 1.6)
-    .from(q('.about-dossier-meta'), { autoAlpha: 0, y: 14, duration: 0.5 }, 2.4);
-
-  // 4. Tracks: each one lands in turn while the rail fills to match
-  tracks.forEach((track, i) => {
-    const at = 2.4 + i * 0.75;
-    tl.from(track.querySelector('.about-track-body'), { autoAlpha: 0, x: 56, duration: 0.8 }, at)
-      .from(track.querySelector('.about-track-line'), { scaleX: 0, transformOrigin: 'left center', duration: 0.8, ease: 'power2.inOut' }, at)
-      .from(track.querySelector('.about-track-dot'), { scale: 0, duration: 0.5, ease: 'back.out(2.4)' }, at + 0.1)
-      .to(progress, { scaleY: (i + 1) / tracks.length, duration: 0.75, ease: 'none' }, at);
-  });
-
-  // 5. Short hold so the finished composition rests before the section unpins
-  tl.to({}, { duration: 0.8 });
-  buildScrambleReveals(section);
+  scrambleRuns.set(element, tween);
 };
 
-/* -------------------------------------------------------------------------
-   MOBILE / SHORT SCREENS: no pin. Each block reveals as it enters and
-   reverses when scrolled back above its trigger.
-   ------------------------------------------------------------------------- */
-const buildFlowReveals = (section, q) => {
-  const toggle = (trigger, start = 'top 88%') => ({
-    trigger,
-    start,
-    toggleActions: 'play none none reverse',
-  });
+const buildScrambleReveals = (section) => {
+  section.querySelectorAll('[data-about-scramble]').forEach((target, index) => {
+    const trigger = target.closest('.abx-track, .abx-lead-card, .abx-callout, .abx-copy') || target;
+    const duration = 0.58 + (index % 3) * 0.08;
 
-  q('.about-eyebrow, .about-kicker, .about-intro-fade, .about-dossier, .about-track').forEach((el) => {
+    ScrollTrigger.create({
+      trigger,
+      start: 'top 82%',
+      onEnter: () => scrambleText(target, duration),
+      onEnterBack: () => scrambleText(target, duration),
+    });
+  });
+};
+
+const buildGlitch = (section) => {
+  section.querySelectorAll('.abx-glitch-bar').forEach((bar, index) => {
+    gsap.to(bar, {
+      x: () => gsap.utils.random(-20, 38),
+      scaleX: () => gsap.utils.random(0.65, 1.35),
+      duration: 0.14,
+      ease: 'steps(2)',
+      yoyo: true,
+      repeat: -1,
+      repeatDelay: 1 + index * 0.7,
+      repeatRefresh: true,
+    });
+  });
+};
+
+/** Low-amplitude pointer parallax for the character and distant background only. */
+const buildParallax = (section) => {
+  const elements = [
+    { element: section.querySelector('.abx-character-parallax'), x: 10, y: 6 },
+    { element: section.querySelector('.abx-bg'), x: -7, y: -5 },
+    { element: section.querySelector('.abx-glow'), x: 18, y: 10 },
+  ].filter(({ element }) => element);
+
+  const rigs = elements.map(({ element, x, y }) => ({
+    x,
+    y,
+    moveX: gsap.quickTo(element, 'x', { duration: 0.8, ease: 'power3.out' }),
+    moveY: gsap.quickTo(element, 'y', { duration: 0.8, ease: 'power3.out' }),
+  }));
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
+    const rect = section.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const nx = (event.clientX - rect.left) / rect.width - 0.5;
+    const ny = (event.clientY - rect.top) / rect.height - 0.5;
+    rigs.forEach(({ x, y, moveX, moveY }) => {
+      moveX(nx * x);
+      moveY(ny * y);
+    });
+  };
+
+  const resetPointer = () => {
+    rigs.forEach(({ moveX, moveY }) => {
+      moveX(0);
+      moveY(0);
+    });
+  };
+
+  section.addEventListener('pointermove', handlePointerMove);
+  section.addEventListener('pointerleave', resetPointer);
+
+  return () => {
+    section.removeEventListener('pointermove', handlePointerMove);
+    section.removeEventListener('pointerleave', resetPointer);
+  };
+};
+
+/** Use normal document flow at every breakpoint; no pinned scene to trap short viewports. */
+const buildFlowReveals = (section) => {
+  const reveals = section.querySelectorAll('.abx-reveal');
+
+  reveals.forEach((element, index) => {
     gsap.fromTo(
-      el,
-      { autoAlpha: 0, y: 24 },
+      element,
+      { autoAlpha: 0, y: index === 1 ? 30 : 18 },
       {
         autoAlpha: 1,
         y: 0,
-        duration: 0.65,
+        duration: element.classList.contains('abx-character') ? 0.95 : 0.68,
+        delay: index < 4 ? index * 0.035 : 0,
         ease: 'power3.out',
-        scrollTrigger: toggle(el),
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
       },
     );
   });
 
-  gsap.fromTo(
-    q('.about-headline-word'),
-    { yPercent: 100 },
-    {
-      yPercent: 0,
-      duration: 0.75,
-      stagger: 0.1,
-      ease: 'power4.out',
-      scrollTrigger: toggle(section.querySelector('.about-headline')),
-    },
-  );
+  const headlineWords = section.querySelectorAll('.abx-headline-word');
+  if (headlineWords.length) {
+    gsap.fromTo(
+      headlineWords,
+      { yPercent: 108 },
+      {
+        yPercent: 0,
+        duration: 0.72,
+        stagger: 0.1,
+        ease: 'power4.out',
+        scrollTrigger: {
+          trigger: section.querySelector('.abx-headline'),
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+      },
+    );
+  }
 
-  const dossier = section.querySelector('.about-dossier');
-
-  gsap.fromTo(
-    q('.about-dossier-reveal'),
-    { clipPath: CLIP_HIDDEN, y: 20 },
-    { clipPath: CLIP_SHOWN, y: 0, duration: 0.8, ease: 'power4.inOut', scrollTrigger: toggle(dossier) },
-  );
-
-  gsap.fromTo(
-    q('.about-dossier-img'),
-    { scale: 1.18 },
-    {
-      scale: 1,
-      duration: 1,
-      ease: 'power2.out',
-      scrollTrigger: toggle(dossier),
-    },
-  );
-
-  buildScrambleReveals(section, { mobile: true });
+  buildScrambleReveals(section);
 };
 
 const AboutSection = () => {
@@ -212,155 +200,227 @@ const AboutSection = () => {
     const section = sectionRef.current;
     if (!section) return undefined;
 
-    const q = gsap.utils.selector(section);
     let disposed = false;
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      mm.add(
+    const media = gsap.matchMedia();
+    const context = gsap.context(() => {
+      media.add(
         {
-          isDesktop: '(min-width: 1024px)',
-          isTall: '(min-height: 700px)',
+          wideScreen: '(min-width: 1280px)',
           reduceMotion: '(prefers-reduced-motion: reduce)',
         },
-        (context) => {
-          const { isDesktop, isTall, reduceMotion } = context.conditions;
-
-          // Reduced motion: no animation at all, everything stays visible.
+        ({ wideScreen, reduceMotion }) => {
+          // Leave every item visible and static when reduced motion is requested.
           if (reduceMotion) return undefined;
 
-          // Pin only when the whole stage fits the viewport.
-          if (isDesktop && isTall) {
-            buildPinnedSequence(section, q);
-          } else {
-            buildFlowReveals(section, q);
-          }
+          buildFlowReveals(section);
+          if (wideScreen) return buildParallax(section);
           return undefined;
         },
       );
+
+      // Glitch movement is decorative and stays subtle; skip it for reduced-motion users.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) buildGlitch(section);
     }, section);
 
-    // Web fonts change text height, so re-measure pin distances once they load.
-    document.fonts?.ready.then(() => {
-      if (!disposed) {
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-      }
-    });
-
-    requestAnimationFrame(() => {
+    const refresh = () => {
       if (!disposed) ScrollTrigger.refresh();
-    });
+    };
+
+    requestAnimationFrame(refresh);
+    document.fonts?.ready?.then(refresh);
 
     return () => {
       disposed = true;
-      ctx.revert();
+      media.revert();
+      context.revert();
+
+      section.querySelectorAll('[data-about-original-text]').forEach((element) => {
+        scrambleRuns.get(element)?.kill();
+        element.textContent = element.dataset.aboutOriginalText;
+      });
     };
   }, []);
+
+  const handleJoinClick = () => {
+    const target = document.getElementById('contact');
+    if (!target) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  };
 
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="about-section relative w-full overflow-hidden border-b border-slate-900/10 bg-(--color-bg) py-20 lg:flex lg:min-h-screen lg:items-center lg:py-24"
+      aria-labelledby="about-heading"
+      className="about-section section-dark relative isolate flex w-full flex-col overflow-hidden border-b border-white/10 bg-[#04090d] text-white"
     >
-      <div className="content-rail relative z-10 w-full">
+      {/* Atmospheric background. The lead image below is deliberately not masked, tinted, or cropped. */}
+      <div
+        aria-hidden="true"
+        className="abx-bg pointer-events-none absolute -inset-6 -z-30 bg-cover bg-center"
+        style={{
+          backgroundImage: `linear-gradient(180deg, rgba(3,8,12,0.66) 0%, rgba(3,8,12,0.46) 46%, rgba(3,8,12,0.92) 100%), url("${ABOUT_BACKGROUND_IMAGE_SRC}")`,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="abx-glow pointer-events-none absolute right-[11%] top-[6%] -z-20 h-64 w-64 rounded-full bg-(--color-primary)/20 blur-[105px] sm:h-80 sm:w-80 sm:blur-[120px]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(2,6,9,0.74)_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.022)_0_1px,transparent_1px_3px)]"
+      />
 
-        <div className="mx-auto grid min-w-0 max-w-6xl grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-10">
-          {/* Intro */}
-          <div className="min-w-0 lg:col-span-5">
-
-            <h2 className="about-headline font-display text-[clamp(3.25rem,17vw,4.5rem)] font-bold uppercase leading-[0.84] tracking-[-0.07em] text-[#081922] sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl">
-              {HEADLINE_LINES.map((line) => (
-                <span key={line} className="-my-[0.08em] block overflow-hidden py-[0.08em]">
-                  <span className="about-headline-word block will-change-transform">{line}</span>
-                </span>
-              ))}
-            </h2>
-
-            <p data-about-scramble className="about-intro-fade mt-6 font-body text-sm leading-relaxed text-slate-600">
-              DecodeXtreme is a focused online programming experience by the IEEE Student Branch of SLTC, built to help student teams sharpen their algorithms, strategy, and confidence.
+      {/* Section metadata */}
+      <header className="relative z-20 w-full px-5 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 xl:pt-20">
+        <div className="mx-auto flex w-full max-w-[90rem] items-start justify-between gap-5">
+          <div className="min-w-0">
+            <p className="abx-reveal font-mono text-[9px] uppercase tracking-[0.16em] text-white/45 sm:text-[10px] sm:tracking-[0.2em]">
+              The Animus training network
             </p>
+          </div>
+          <p className="abx-reveal hidden shrink-0 text-right font-mono text-[9px] uppercase leading-[1.8] tracking-[0.16em] text-white/45 sm:block sm:text-[10px]">
+            IEEE Student Branch of SLTC
+            <br />
+            2026 / Online
+          </p>
+        </div>
+      </header>
 
-            <div className="about-intro-fade mt-6">
+      {/* Desktop: title on the left, full uncropped lead image in the centre, details and protocols on the right.
+          Mobile: the same content becomes a readable vertical sequence. */}
+      <main className="relative z-10 mx-auto w-full max-w-[90rem] flex-1 px-5 sm:px-8 lg:px-10">
+        <div className="relative mx-auto grid w-full grid-cols-1 items-center gap-8 py-8 sm:gap-10 sm:py-10 md:grid-cols-2 md:gap-x-8 xl:min-h-[43rem] xl:grid-cols-12 xl:items-stretch xl:gap-x-7 xl:py-8">
+          {/* Left column: headline and supporting copy */}
+          <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-3 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
+            <div className="max-w-[24rem]">
+              <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-white/45 sm:text-[10px]">
+                Think beyond the obvious
+              </p>
+              <h2
+                id="about-heading"
+                className="abx-headline font-display text-[clamp(3.3rem,14vw,5.2rem)] font-bold uppercase leading-[0.84] tracking-[-0.065em] sm:text-6xl md:text-[clamp(3rem,6.2vw,4.8rem)] xl:text-[clamp(2.6rem,3.5vw,4.25rem)] 2xl:text-[4.5rem]"
+              >
+                {HEADLINE_LINES.map((line) => (
+                  <span key={line} className="-my-[0.08em] block overflow-hidden py-[0.08em]">
+                    <span className="abx-headline-word block will-change-transform">{line}</span>
+                  </span>
+                ))}
+              </h2>
+              <p data-about-scramble className="abx-intro-text mt-5 max-w-sm font-body text-[13px] leading-6 text-white/70 sm:text-sm">
+                DecodeXtreme is an online programming experience by the IEEE Student Branch of SLTC, helping student teams sharpen their algorithms, strategy, and confidence.
+              </p>
               <button
                 type="button"
-                className="nav-angular-button inline-flex items-center gap-3 bg-(--color-primary) px-4 py-3 font-display text-[10px] font-bold uppercase tracking-widest text-[#052126] transition-colors hover:bg-(--color-electric-aqua)"
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={handleJoinClick}
+                className="mt-6 inline-flex min-h-11 items-center justify-center gap-3 border border-(--color-primary) bg-(--color-primary) px-5 py-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[#052126] transition duration-200 hover:-translate-y-0.5 hover:bg-(--color-electric-aqua) hover:shadow-[0_8px_28px_rgba(0,255,230,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white active:translate-y-0 sm:mt-7"
               >
                 <span>Join the mission</span>
-                <ArrowUpRight size={14} aria-hidden="true" />
+                <ArrowUpRight size={15} aria-hidden="true" />
               </button>
             </div>
 
-            <div className="about-intro-fade mt-5 flex items-center gap-3 border-l-2 border-(--color-primary) pl-3 font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500">
-              <ShieldCheck size={16} className="shrink-0 text-(--color-secondary)" aria-hidden="true" />
-              <span data-about-scramble>Open access · Sri Lanka · 100% online</span>
-            </div>
+            {/* Recruitment and supporting text sit low on the left on desktop. */}
+            <aside className="abx-callout abx-reveal mt-8 w-full max-w-[22rem] border-t border-white/20 pt-4 sm:mt-10 xl:mt-12">
+              <div className="mb-3 flex items-center gap-3">
+                <span className="relative block h-5 w-10 shrink-0 overflow-hidden border border-(--color-primary)/70">
+                  <span className="abx-glitch-bar absolute left-0 top-1 h-1.5 w-1/2 bg-(--color-primary)" />
+                  <span className="abx-glitch-bar absolute bottom-1 right-0 h-1 w-1/3 bg-white/80" />
+                </span>
+                <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary)">Now recruiting</p>
+              </div>
+              <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] sm:text-4xl">
+                Decoders <span className="text-(--color-primary)">wanted.</span>
+              </p>
+              <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-white/55 sm:text-[10px]">
+                <ShieldCheck size={15} className="mt-px shrink-0 text-(--color-primary)" aria-hidden="true" />
+                <span data-about-scramble>Open access · Sri Lanka · 100% online</span>
+              </p>
+            </aside>
           </div>
 
-          {/* Organizer card */}
-          <div className="mx-auto w-full min-w-0 max-w-sm lg:col-span-3 lg:max-w-none">
-            <div className="about-dossier nav-angular overflow-hidden border border-slate-900/10 bg-white p-2 shadow-[0_18px_50px_rgba(8,25,34,0.1)]">
-              <div className="about-dossier-reveal relative aspect-[0.92] overflow-hidden bg-[#dfe7e9]">
+          {/* Centre: no frame, mask, overlay, filter, or object-cover. Keep the composed artwork intact. */}
+          <div className="abx-lead order-2 relative mx-auto h-[min(78svh,37rem)] min-h-[23rem] w-full max-w-[34rem] md:col-span-1 md:h-[36rem] md:max-w-none xl:col-span-5 xl:col-start-4 xl:row-start-1 xl:h-auto xl:min-h-[43rem] xl:w-full xl:self-stretch">
+            <div className="abx-character abx-reveal pointer-events-none absolute inset-0 z-0">
+              <div className="abx-character-parallax h-full w-full">
                 <img
-                  src={projectChair}
-                  alt="Organizer leadership"
-                  className="about-dossier-img h-full w-full object-cover grayscale-[0.2] will-change-transform"
+                  src={ABOUT_LEAD_IMAGE_SRC}
+                  alt="DecodeXtreme project chairperson"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  onError={(event) => {
+                    event.currentTarget.style.visibility = 'hidden';
+                  }}
+                  className="block h-full w-full bg-transparent object-contain object-bottom"
                 />
-                <div className="about-dossier-meta absolute inset-x-4 bottom-4 flex items-end justify-between">
-                  <span className="bg-[#081922]/90 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white">
-                    <span data-about-scramble>Organizer profile</span>
-                  </span>
-                  <span className="bg-(--color-primary) p-2 text-[#052126]">
-                    <Quote size={14} fill="currentColor" aria-hidden="true" />
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between gap-3 px-3 py-3">
-                <div>
-                  <h3 data-about-scramble className="font-display text-sm font-bold uppercase tracking-[0.03em] text-[#081922]">
-                    IEEE Student Branch of SLTC
-                  </h3>
-                  <p data-about-scramble className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-(--color-secondary)">
-                    Student Chapter · Computer Society
-                  </p>
-                </div>
-                <span className="font-mono text-[9px] text-slate-400">2026</span>
               </div>
             </div>
+            <span aria-hidden="true" className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/35 xl:flex">
+              <span className="h-px w-6 bg-(--color-primary)/70" />
+              Character profile
+              <span className="h-px w-6 bg-(--color-primary)/70" />
+            </span>
           </div>
 
-          {/* Tracks with progress rail */}
-          <div className="relative min-w-0 pl-7 lg:col-span-4">
-            <span aria-hidden="true" className="about-rail-progress absolute left-0 top-0 h-full w-px origin-top bg-(--color-primary)" />
+          {/* Right column: leadership details, then the three protocols vertically. */}
+          <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-4 xl:col-start-9 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
+            <section className="abx-lead-card abx-reveal relative border-l-2 border-(--color-primary) bg-[#04090d]/55 py-4 pl-5 pr-2 sm:py-5 sm:pl-6 sm:pr-4">
+              <div className="absolute -left-[2px] top-0 h-8 w-[2px] bg-white/70" aria-hidden="true" />
+              <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary) sm:text-[10px]">
+                Project leadership // 01
+              </p>
+              <h3 data-about-scramble className="mt-2 font-display text-2xl font-bold uppercase leading-[0.95] tracking-[-0.04em] text-white sm:text-3xl">
+                Project Chairperson
+              </h3>
+              <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.11em] text-white/65 sm:text-[10px] sm:tracking-[0.13em]">
+                Lead Coordinator · DecodeXtreme 2026
+              </p>
+              <p data-about-scramble className="mt-3 max-w-lg text-xs leading-[1.7] text-white/60 sm:text-[13px]">
+                Guiding the initiative from concept to competition and connecting the student community with the skills and confidence to enter the IEEEXtreme arena.
+              </p>
+            </section>
 
-            <div className="grid auto-rows-fr gap-6">
-              {LEARNING_TRACKS.map((track) => (
-                <article key={track.num} className="about-track relative pt-5">
-                  <span aria-hidden="true" className="about-track-line absolute inset-x-0 top-0 h-px bg-slate-900/10" />
-                  <span
-                    aria-hidden="true"
-                    className="about-track-dot absolute -left-7 top-0 -ml-[3.5px] -mt-1 h-2 w-2 rounded-full bg-(--color-primary) ring-4 ring-(--color-bg)"
-                  />
+            <section className="mt-8 sm:mt-10 xl:mt-9" aria-labelledby="about-protocols-heading">
+              <div className="abx-reveal mb-4 flex items-center gap-3 sm:mb-5">
+                <span aria-hidden="true" className="h-px w-7 shrink-0 bg-(--color-primary)" />
+                <h3 id="about-protocols-heading" className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-white/65 sm:text-[10px] sm:tracking-[0.2em]">
+                  3 training protocols
+                </h3>
+              </div>
 
-                  <div className="about-track-body">
-                    <div className="mb-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-(--color-primary)">
-                      <span >{track.badge}</span>
-                      <span>{track.num}</span>
+              <div className="space-y-5 sm:space-y-6">
+                {LEARNING_TRACKS.map((track) => (
+                  <article key={track.num} className="abx-track abx-reveal group relative min-w-0 border-t border-white/20 pt-4 transition-colors duration-300 hover:border-(--color-primary)/80 sm:pt-5">
+                    <span aria-hidden="true" className="absolute -top-[7px] left-0 text-(--color-primary)">
+                      <X size={13} strokeWidth={2.5} />
+                    </span>
+                    <div className="mb-2 flex items-start justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.1em] text-(--color-primary) sm:tracking-[0.13em]">
+                      <span>{track.badge}</span>
+                      <span className="shrink-0 text-white/40">{track.num}</span>
                     </div>
-                    <h3 className="font-display text-xl font-bold uppercase leading-none tracking-[-0.04em] text-[#081922]">
+                    <h4 className="font-display text-base font-bold uppercase leading-tight tracking-[-0.025em] text-white sm:text-lg">
                       {track.title}
-                    </h3>
-                    <p data-about-scramble className="mt-3 text-xs leading-relaxed text-slate-500">{track.desc}</p>
-                    <p data-about-scramble className="mt-3 font-mono text-[9px] uppercase tracking-[0.12em] text-slate-400">{track.tag}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+                    </h4>
+                    <p data-about-scramble className="mt-2 text-[11px] leading-[1.7] text-white/60 sm:text-xs sm:leading-[1.75]">
+                      {track.desc}
+                    </p>
+                    <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.1em] text-white/40 sm:tracking-[0.12em]">
+                      {track.tag}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
         </div>
-      </div>
+      </main>
     </section>
   );
 };

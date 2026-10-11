@@ -18,7 +18,7 @@ const NAV_ITEMS = [
 const Navbar = ({
   onOpenRegister,
   isMuted = true,
-  setIsMuted,
+  onToggleAudio,
   audioAvailable = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -153,7 +153,7 @@ const Navbar = ({
               {audioAvailable ? (
                 <SoundAmbiance
                   isMuted={isMuted}
-                  setIsMuted={setIsMuted}
+                  onToggle={onToggleAudio}
                 />
               ) : (
                 <span
@@ -180,7 +180,7 @@ const Navbar = ({
               {audioAvailable ? (
                 <button
                   type="button"
-                  onClick={() => setIsMuted?.(!isMuted)}
+                  onClick={onToggleAudio}
                   aria-label={isMuted ? 'Enable background ambience' : 'Mute background ambience'}
                   aria-pressed={!isMuted}
                   className="nav-angular-button inline-flex h-8 w-8 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-700 transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] sm:h-9 sm:w-9"

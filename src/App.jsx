@@ -25,6 +25,12 @@ import Pages from './pages/Pages';
 // Correct URL: do not include "public" in the path.
 const BACKGROUND_AUDIO_SRC = '/audio/The_Measured_Thought.mp3';
 const BACKGROUND_AUDIO_VOLUME = 0.22;
+// Change this single value to control whether the site starts muted.
+const BACKGROUND_AUDIO_START_MUTED = false;
+
+// Events browsers accept as a "user gesture" for starting audible audio.
+// (Scrolling and hovering do not count.)
+const AUDIO_UNLOCK_EVENTS = ['pointerdown', 'pointerup', 'touchend', 'keydown'];
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,7 +65,10 @@ const App = () => {
   const audioRef = useRef(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(BACKGROUND_AUDIO_START_MUTED);
+  // True while the browser has blocked audible autoplay and we are waiting
+  // for the visitor's first click / tap / key press to switch the sound on.
+  const [audioNeedsGesture, setAudioNeedsGesture] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [regType, setRegType] = useState('individual');
 
@@ -78,12 +87,99 @@ const App = () => {
     }
   }, [isLoading]);
 
+  // 1. Try to start audible playback as early as possible.
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) return undefined;
 
-    audio.volume = BACKGROUND_AUDIO_VOLUME;
+    let cancelled = false;
+
+    const startAudio = async () => {
+      audio.volume = BACKGROUND_AUDIO_VOLUME;
+      audio.muted = BACKGROUND_AUDIO_START_MUTED;
+
+      if (BACKGROUND_AUDIO_START_MUTED) {
+        setIsMuted(true);
+        try {
+          await audio.play();
+        } catch {
+          // Playback can start after the visitor uses the audio control.
+        }
+        return;
+      }
+
+      try {
+        // Attempt immediate audible playback.
+        await audio.play();
+
+        if (!cancelled && !audio.muted) {
+          setIsMuted(false);
+        }
+      } catch {
+        if (cancelled) return;
+
+        // Audible autoplay was blocked by the browser. Keep the track running
+        // muted and switch the sound on at the visitor's first interaction.
+        audio.muted = true;
+        setIsMuted(true);
+        setAudioNeedsGesture(true);
+
+        try {
+          await audio.play();
+        } catch {
+          // The first interaction will start it.
+        }
+      }
+    };
+
+    void startAudio();
+
+    return () => {
+      cancelled = true;
+      audio.pause();
+    };
   }, []);
+
+  // 2. If autoplay was blocked, turn the sound on at the first real gesture.
+  useEffect(() => {
+    if (!audioNeedsGesture) return undefined;
+
+    const audio = audioRef.current;
+    if (!audio) return undefined;
+
+    const unlock = (event) => {
+      // The audio toggle buttons handle their own click; don't fight them.
+      if (event.target instanceof Element && event.target.closest('[aria-pressed]')) return;
+      // Escape is not accepted by browsers as a gesture.
+      if (event.type === 'keydown' && event.key === 'Escape') return;
+
+      audio.volume = BACKGROUND_AUDIO_VOLUME;
+      audio.muted = false;
+
+      audio
+        .play()
+        .then(() => {
+          setIsMuted(false);
+          setAudioNeedsGesture(false);
+        })
+        .catch(() => {
+          // This event was not accepted as a gesture (e.g. a touch
+          // pointerdown). Go back to muted playback and wait for the next one.
+          audio.muted = true;
+          audio.play().catch(() => {});
+        });
+    };
+
+    AUDIO_UNLOCK_EVENTS.forEach((name) =>
+      window.addEventListener(name, unlock, { capture: true, passive: true }),
+    );
+
+    return () => {
+      AUDIO_UNLOCK_EVENTS.forEach((name) =>
+        window.removeEventListener(name, unlock, { capture: true }),
+      );
+    };
+  }, [audioNeedsGesture]);
 
   const openRegister = (type = 'individual') => {
     setRegType(type);
@@ -103,6 +199,9 @@ const App = () => {
       typeof nextValue === 'function'
         ? nextValue(isMuted)
         : nextValue;
+
+    // The visitor is now in control; stop waiting for a gesture.
+    setAudioNeedsGesture(false);
 
     const audio = audioRef.current;
 
@@ -138,8 +237,13 @@ const App = () => {
     }
   };
 
+  const toggleAudio = () => {
+    void handleSetMuted((currentMuted) => !currentMuted);
+  };
+
   const handleAudioError = () => {
     setIsMuted(true);
+    setAudioNeedsGesture(false);
     console.error(
       'Unable to load background audio:',
       BACKGROUND_AUDIO_SRC
@@ -148,13 +252,13 @@ const App = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-clip bg-[var(--color-bg)] text-[var(--color-text)] selection:bg-[var(--color-primary)] selection:text-[#05090d]">
-      {/* Background ambience starts only after the visitor activates it. */}
+      {/* Background ambience starts when the initial page loading completes. */}
       <audio
         ref={audioRef}
         src={BACKGROUND_AUDIO_SRC}
         loop
-        muted
-        preload="none"
+        preload="auto"
+        autoPlay
         onError={handleAudioError}
         aria-label="Ambient background audio"
       />
@@ -170,7 +274,7 @@ const App = () => {
       <Navbar
         onOpenRegister={() => openRegister('individual')}
         isMuted={isMuted}
-        setIsMuted={handleSetMuted}
+        onToggleAudio={toggleAudio}
         audioAvailable={Boolean(BACKGROUND_AUDIO_SRC)}
       />
 

@@ -79,7 +79,7 @@ const PrizesSection = () => {
     <section
       id="prizes"
       ref={sectionRef}
-      className="relative w-full py-28 bg-transparent text-white overflow-hidden border-b border-white/10"
+      className="section-dark relative w-full py-28 bg-transparent text-white overflow-hidden border-b border-white/10"
     >
       <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-30" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--color-primary)]/5 rounded-full blur-[160px] pointer-events-none" />

@@ -109,7 +109,7 @@ const AnimusGlobalBackground = () => {
         <img
           src={battlefieldBg}
           alt=""
-          className="h-full w-full scale-200 object-cover contrast-110 brightness-200 saturate-100"
+          className="h-full w-full scale-200 object-cover contrast-125 brightness-75 saturate-125"
         />
       </div>
 
@@ -120,7 +120,7 @@ const AnimusGlobalBackground = () => {
         <img
           src={eagleVisionBg}
           alt=""
-          className="h-full w-full scale-105 object-cover contrast-110 brightness-200 saturate-95"
+          className="h-full w-full scale-105 object-cover contrast-125 brightness-75 saturate-110"
         />
       </div>
 
