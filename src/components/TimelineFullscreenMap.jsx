@@ -19,7 +19,6 @@ import {
   Globe2,
   Compass
 } from 'lucide-react';
-import mapImage from '../assets/map/map.svg';
 import './TimelineFullscreenMap.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -179,27 +178,17 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
   useEffect(() => {
     const cur = timelineData[active];
     if (mapCanvasRef.current) {
-      if (isMobile) {
-        // Mobile portrait camera focus
-        const mobileScale = isZoomed ? 2.25 : 1.85;
-        gsap.to(mapCanvasRef.current, {
-          x: cur.mobilePanX,
-          y: cur.mobilePanY,
-          scale: mobileScale,
-          duration: 0.85,
-          ease: 'power3.out'
-        });
-      } else {
-        // Desktop landscape camera focus
-        const desktopScale = isZoomed ? 1.35 : 1.12;
-        gsap.to(mapCanvasRef.current, {
-          x: cur.panX,
-          y: cur.panY,
-          scale: desktopScale,
-          duration: 1.05,
-          ease: 'power3.out'
-        });
-      }
+      const scale = isZoomed ? 1.3 : 1;
+      gsap.to(mapCanvasRef.current, {
+        xPercent: -50 + (50 - cur.x) * scale,
+        yPercent: -50 + (50 - cur.y) * scale,
+        x: isMobile ? 0 : '-15vw',
+        y: isMobile ? '-8dvh' : 0,
+        scale,
+        duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.85,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      });
     }
 
     if (dossierRef.current) {
@@ -272,61 +261,58 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       {/* 1. Fullscreen Map Background Layer (Kept Natural White) */}
       <div
         ref={mapCanvasRef}
-        className="map-canvas-container bg-white"
+        className="map-canvas-container"
       >
-        <img
-          src={mapImage}
-          alt="DecodeXtreme Global Tactical Mission Map"
-          className="map-fullscreen-image"
-          draggable="false"
-        />
-
-        {/* Global Connection Laser Circuit Route */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-10"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
+        <div
+          className="animus-cartography"
+          role="img"
+          aria-label="City district map with canals, narrow streets, building courtyards, and four mission landmarks"
         >
-          <defs>
-            <linearGradient id="laserGradWhite" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#00b4d8" stopOpacity="0.4" />
-              <stop offset="50%" stopColor="#0077b6" stopOpacity="1" />
-              <stop offset="100%" stopColor="#e63946" stopOpacity="1" />
-            </linearGradient>
+          {['harbor', 'west', 'north', 'market', 'central', 'east', 'gardens', 'south', 'citadel'].map((district) => (
+            <div key={district} className={`city-district city-district--${district}`}>
+              <div className="city-buildings">
+                {Array.from({ length: 30 }, (_, block) => (
+                  <span key={block} className="city-building" />
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="city-canal city-canal--grand" />
+          <div className="city-canal city-canal--crossing" />
+          {[
+            [28, 29, -23], [34, 67, 27], [53, 41, -30],
+            [61, 73, 18], [73, 29, 27], [78, 66, -20]
+          ].map(([left, top, angle]) => (
+            <div key={`${left}-${top}`} className="city-bridge" style={{ left: `${left}%`, top: `${top}%`, rotate: `${angle}deg` }} />
+          ))}
+          {timelineData.map((stop) => (
+            <div key={stop.checkpoint} className={`city-landmark city-landmark--${stop.checkpoint}`} style={{ left: `${stop.x}%`, top: `${stop.y}%` }} />
+          ))}
+          <div className="city-map-label city-map-label--harbor">WESTERN QUAYS</div>
+          <div className="city-map-label city-map-label--market">MARKET DISTRICT</div>
+          <div className="city-map-label city-map-label--citadel">THE CITADEL</div>
+        </div>
 
-            <filter id="laserGlowWhite" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="0.4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+        <div className="animus-routes" aria-hidden="true">
+          {timelineData.slice(1).map((stop, index) => {
+            const previous = timelineData[index];
+            const deltaX = stop.x - previous.x;
+            const deltaY = (stop.y - previous.y) / 2;
 
-          {/* Background Circuit Trace */}
-          <polyline
-            points="21.5,49.0 43.5,33.7 65.7,58.2 80.5,45.2"
-            fill="none"
-            stroke="rgba(0, 0, 0, 0.22)"
-            strokeWidth="0.6"
-            strokeDasharray="1.5 1.5"
-          />
-
-          {/* Active Energized Laser Line */}
-          {active > 0 && (
-            <polyline
-              points={timelineData
-                .slice(0, active + 1)
-                .map((p) => `${p.x},${p.y}`)
-                .join(' ')}
-              fill="none"
-              stroke="url(#laserGradWhite)"
-              strokeWidth={isMobile ? 1.6 : 1.2}
-              filter="url(#laserGlowWhite)"
-              className="laser-path-flow-white"
-            />
-          )}
-        </svg>
+            return (
+              <div
+                key={stop.checkpoint}
+                className={`animus-route${active > index ? ' is-active' : ''}${index === timelineData.length - 2 ? ' is-final' : ''}`}
+                style={{
+                  left: `${previous.x}%`,
+                  top: `${previous.y}%`,
+                  width: `${Math.hypot(deltaX, deltaY)}%`,
+                  transform: `rotate(${Math.atan2(deltaY, deltaX)}rad)`
+                }}
+              />
+            );
+          })}
+        </div>
 
         {/* Interactive Location Checkpoints on White Map */}
         {timelineData.map((stop, idx) => {
@@ -364,7 +350,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
 
                 {/* Pin Core Orb */}
                 <div
-                  className={`w-9 h-9 md:w-9 md:h-9 rounded-full flex items-center justify-center font-mono font-bold text-xs transition-all duration-300 border-2 ${
+                  className={`city-checkpoint-core w-9 h-9 md:w-9 md:h-9 flex items-center justify-center font-mono font-bold text-xs transition-all duration-300 border-2 ${
                     isActive
                       ? 'border-[#00b4d8] bg-[#060c14] text-[#00f2fe] active-pin-glow-white shadow-[0_4px_20px_rgba(0,180,216,0.6)]'
                       : isPassed
