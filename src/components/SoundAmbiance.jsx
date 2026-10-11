@@ -1,83 +1,43 @@
-import React, { useEffect, useRef } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 
-const SoundAmbiance = ({ isMuted, setIsMuted }) => {
-  const audioCtxRef = useRef(null);
-  const gainNodeRef = useRef(null);
-  const osc1Ref = useRef(null);
-  const osc2Ref = useRef(null);
-
-  useEffect(() => {
-    // Only init audio context once user toggles unmute (browser autoplay policy)
-    if (!isMuted && !audioCtxRef.current) {
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioContext();
-        audioCtxRef.current = ctx;
-
-        const masterGain = ctx.createGain();
-        masterGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        masterGain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 2);
-        gainNodeRef.current = masterGain;
-
-        // Lowpass filter for deep cinematic Animus drone
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(180, ctx.currentTime);
-
-        // Sub bass oscillator
-        const osc1 = ctx.createOscillator();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(55, ctx.currentTime); // A1 note
-
-        // Soft shimmer harmonic
-        const osc2 = ctx.createOscillator();
-        osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(110, ctx.currentTime); // A2
-
-        osc1.connect(filter);
-        osc2.connect(filter);
-        filter.connect(masterGain);
-        masterGain.connect(ctx.destination);
-
-        osc1.start();
-        osc2.start();
-
-        osc1Ref.current = osc1;
-        osc2Ref.current = osc2;
-      } catch (e) {
-        console.warn('Web Audio not permitted yet', e);
-      }
-    } else if (audioCtxRef.current && gainNodeRef.current) {
-      const ctx = audioCtxRef.current;
-      if (isMuted) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
-      } else {
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.5);
-      }
-    }
-  }, [isMuted]);
+const SoundAmbiance = ({ isMuted = true, onToggle, compact = false }) => {
+  const canToggle = typeof onToggle === 'function';
+  const label = isMuted ? 'Enable background ambience' : 'Mute background ambience';
 
   return (
     <button
-      onClick={() => setIsMuted(!isMuted)}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:border-[var(--color-primary)]/50 hover:bg-white/10 transition-all text-xs font-mono uppercase tracking-wider text-gray-300 hover:text-white"
-      title={isMuted ? 'Enable Animus Ambiance' : 'Mute Ambiance'}
-      aria-label="Toggle Sound"
+      type="button"
+      onClick={onToggle}
+      disabled={!canToggle}
+      className={[
+        'nav-angular-button inline-flex min-h-8 items-center justify-center gap-2 border',
+        'border-slate-900/10 bg-white/90 text-slate-600 shadow-[0_6px_18px_rgba(8,25,34,0.04)]',
+        'transition-[background-color,border-color,color,opacity] duration-200',
+        'hover:border-[var(--color-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-secondary)]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)]',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        compact ? 'h-8 w-8 px-0 sm:h-9 sm:w-9' : 'min-h-10 px-3 py-2.5',
+      ].join(' ')}
+      title={isMuted ? 'Enable Animus Ambiance' : 'Mute Animus Ambiance'}
+      aria-label={label}
+      aria-pressed={!isMuted}
     >
       {isMuted ? (
-        <>
-          <VolumeX size={14} className="text-gray-500" />
-          <span className="hidden sm:inline text-[10px]">Audio Muted</span>
-        </>
+        <VolumeX size={compact ? 16 : 14} aria-hidden="true" className="shrink-0 text-slate-500" />
       ) : (
-        <>
-          <Volume2 size={14} className="text-[var(--color-primary)] animate-pulse" />
-          <span className="hidden sm:inline text-[10px] text-[var(--color-primary)]">Animus Sync</span>
-        </>
+        <Volume2
+          size={compact ? 16 : 14}
+          aria-hidden="true"
+          className="shrink-0 text-[var(--color-secondary)]"
+        />
+      )}
+      {!compact && (
+        <span className={[
+          'font-mono text-[10px] uppercase tracking-[0.08em]',
+          isMuted ? 'text-slate-500' : 'font-bold text-[var(--color-secondary)]',
+        ].join(' ')}>
+          {isMuted ? 'Audio muted' : 'Animus sync'}
+        </span>
       )}
     </button>
   );

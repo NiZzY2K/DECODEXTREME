@@ -109,7 +109,7 @@ const TimelineSection = ({ onOpenRegister }) => {
       className="quest-timeline relative w-full min-h-screen bg-transparent text-white overflow-hidden py-10"
       aria-label="DecodeXtreme 2026 Mission Path"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col justify-between">
+      <div className="content-rail flex h-full flex-col justify-between">
         
         {/* Section Header */}
         <div className="section-header !mb-6 pt-4">

@@ -89,12 +89,12 @@ const ContactSection = () => {
     <section
       id="operatives"
       ref={sectionRef}
-      className="relative w-full py-28 px-6 md:px-12 bg-transparent text-white overflow-hidden border-b border-white/10"
+      className="section-dark relative w-full py-28 bg-transparent text-white overflow-hidden border-b border-white/10"
     >
       <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-30" />
       <div className="absolute top-20 left-1/3 w-96 h-96 bg-[var(--color-primary)]/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="content-rail relative z-10">
         
         {/* CodeSprint Signature Section Header */}
         <div className="section-header">
