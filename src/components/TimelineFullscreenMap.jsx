@@ -255,7 +255,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       ref={sectionRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="timeline-fullscreen relative w-full h-[100dvh] overflow-hidden select-none bg-white text-[#090d16]"
+      className="timeline-fullscreen relative w-full h-[100dvh] overflow-hidden select-none bg-[var(--color-bg)] text-[var(--color-text)]"
       aria-label="DecodeXtreme 2026 Fullscreen Mission Map"
     >
       {/* 1. Fullscreen Map Background Layer (Kept Natural White) */}
@@ -352,10 +352,10 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
                 <div
                   className={`city-checkpoint-core w-9 h-9 md:w-9 md:h-9 flex items-center justify-center font-mono font-bold text-xs transition-all duration-300 border-2 ${
                     isActive
-                      ? 'border-[#00b4d8] bg-[#060c14] text-[#00f2fe] active-pin-glow-white shadow-[0_4px_20px_rgba(0,180,216,0.6)]'
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white active-pin-glow-white shadow-[0_4px_20px_rgba(var(--color-primary-rgb),0.35)]'
                       : isPassed
                       ? 'border-emerald-600 bg-[#062c19] text-emerald-300 shadow-[0_4px_14px_rgba(5,150,105,0.4)]'
-                      : 'border-[#1e293b] bg-[#0f172a] text-white group-hover:border-black shadow-md'
+                      : 'border-slate-300 bg-white text-[var(--color-text)] group-hover:border-[var(--color-primary)] shadow-md'
                   }`}
                 >
                   <span>{stop.checkpoint}</span>
@@ -365,10 +365,10 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
                 <div
                   className={`hidden md:block absolute top-11 px-2.5 py-1 rounded-md text-[11px] font-mono whitespace-nowrap pointer-events-none transition-all duration-300 shadow-xl border ${
                     isActive
-                      ? 'bg-[#060c14] text-[#00f2fe] border-[#00b4d8] font-bold translate-y-0 opacity-100'
+                      ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)] font-bold translate-y-0 opacity-100'
                       : isHovered
                       ? 'bg-black text-white border-white/30 translate-y-0 opacity-100'
-                      : 'bg-[#0f172a]/90 text-gray-200 border-black/20 opacity-90 group-hover:opacity-100'
+                      : 'bg-white/95 text-[var(--color-text)] border-slate-900/10 opacity-90 group-hover:opacity-100'
                   }`}
                 >
                   <div className="flex items-center gap-1.5">
@@ -394,30 +394,17 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 pointer-events-auto">
           {/* Section Heading with High Contrast on White Background */}
           <div>
-            <div className="flex items-center gap-2 mb-0.5 md:mb-1">
-              <span className="px-2 md:px-2.5 py-0.5 rounded-full bg-[#060c14] text-[#00f2fe] border border-[#00b4d8]/40 font-mono text-[9px] md:text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-sm">
-                <Radio size={11} className="animate-pulse text-[#00f2fe]" />
-                RADAR // SECTOR 04
-              </span>
-              <span className="hidden lg:inline-block font-mono text-[10px] text-gray-600 bg-white/80 px-2 py-0.5 rounded border border-gray-200 backdrop-blur-sm">
-                SLT (UTC+05:30)
-              </span>
-            </div>
-
             <div className="flex items-baseline gap-2">
-              <h2 className="font-display text-lg md:text-3xl font-bold uppercase tracking-tight text-[#090d16] drop-shadow-sm">
+              <h2 className="font-display text-lg md:text-4xl font-bold uppercase tracking-tight text-[var(--color-text)] drop-shadow-sm">
                 THE MISSION PATH
               </h2>
-              <span className="hidden sm:inline font-serif italic text-base md:text-2xl text-[#0077b6] font-semibold">
-                Four Checkpoints
-              </span>
             </div>
           </div>
 
           {/* Tactical Telemetry HUD Stats & Controls */}
           <div className="flex items-center gap-2">
-            <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-[#060c14]/90 backdrop-blur-md border border-black/20 font-mono text-xs text-gray-200 shadow-md">
-              <div className="flex items-center gap-1.5 text-[#00f2fe]">
+            <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-900/10 font-mono text-xs text-[var(--color-text-muted)] shadow-md">
+              <div className="flex items-center gap-1.5 text-[var(--color-primary)]">
                 <Crosshair size={13} />
                 <span>{currentEvent.coordinates}</span>
               </div>
@@ -428,8 +415,8 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
               onClick={() => setIsPlaying(!isPlaying)}
               className={`px-2.5 md:px-3 py-1.5 rounded-xl border font-mono text-[11px] md:text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md backdrop-blur-md ${
                 isPlaying
-                  ? 'bg-[#0077b6] border-[#00b4d8] text-white shadow-[0_0_15px_rgba(0,180,216,0.4)]'
-                  : 'bg-[#060c14]/90 border-black/20 text-white hover:bg-black'
+                  ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.25)]'
+                  : 'bg-white/90 border-slate-900/10 text-[var(--color-text)] hover:bg-[var(--color-bg-elevated)]'
               }`}
               title="Toggle Auto-Tour Sync"
             >
@@ -442,8 +429,8 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
               onClick={() => setIsZoomed(!isZoomed)}
               className={`p-1.5 md:p-2 rounded-xl border transition-all cursor-pointer shadow-md backdrop-blur-md ${
                 isZoomed
-                  ? 'bg-[#0077b6] border-[#00b4d8] text-white'
-                  : 'bg-[#060c14]/90 border-black/20 text-white hover:bg-black'
+                  ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white'
+                  : 'bg-white/90 border-slate-900/10 text-[var(--color-text)] hover:bg-[var(--color-bg-elevated)]'
               }`}
               title="Toggle Tactical Zoom Focus"
             >
@@ -453,98 +440,116 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
         </div>
       </div>
 
-      {/* 4A. Desktop Floating Dossier Card (Hidden on Mobile) */}
+            
+      {/* Desktop Floating Dossier Card */}
       <div className="hidden md:block absolute right-6 md:right-10 lg:right-12 top-24 md:top-28 z-30 w-[380px] lg:w-[410px] pointer-events-none">
         <div
           ref={dossierRef}
-          className="hud-dossier-card-white corner-bracket-cyan rounded-2xl p-5 md:p-6 pointer-events-auto border relative"
+          className="hud-dossier-card-light corner-bracket-cyan rounded-2xl p-5 md:p-6 pointer-events-auto relative"
         >
-          {/* Card Top Telemetry */}
-          <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-3.5">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00f2fe] animate-pulse" />
-              <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#00f2fe]">
+          {/* Checkpoint header */}
+          <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-200 mb-4">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-500/30 animate-ping" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-600" />
+              </span>
+
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-cyan-800">
                 CHECKPOINT {currentEvent.checkpoint} / 04
               </span>
             </div>
-            <span className="font-mono text-[11px] text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+
+            <span className="shrink-0 font-mono text-[10px] text-slate-500 bg-slate-100 px-2 py-1 rounded-md border border-slate-200">
               {currentEvent.code}
             </span>
           </div>
 
-          {/* Checkpoint Header & Title */}
-          <div className="space-y-1.5 mb-3.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00f2fe]/10 border border-[#00f2fe]/25 text-[11px] font-mono text-[#00f2fe]">
-              <Globe2 size={12} />
-              <span>{currentEvent.session}</span>
+          {/* Session identity */}
+          <div className="space-y-2 mb-4">
+            <div className="inline-flex max-w-full items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-[10px] font-mono font-semibold text-cyan-800">
+              <Globe2 size={12} className="shrink-0" />
+              <span className="truncate">{currentEvent.session}</span>
             </div>
 
-            <h3 className="font-display text-2xl font-bold text-white leading-tight">
+            <h3 className="font-display text-2xl font-bold text-slate-900 leading-tight">
               {currentEvent.title}
             </h3>
 
-            <p className="text-gray-300 text-xs font-body leading-relaxed line-clamp-3">
+            <p className="text-slate-600 text-xs font-body leading-relaxed line-clamp-3">
               {currentEvent.description}
             </p>
           </div>
 
-          {/* Telemetry Metadata Grid */}
-          <div className="space-y-1.5 pt-2.5 border-t border-white/10 font-mono text-xs mb-4">
-            <div className="flex items-center justify-between py-1 border-b border-white/5">
-              <span className="text-gray-400 flex items-center gap-1.5">
-                <Calendar size={13} className="text-[#00f2fe]" /> DATE
+          {/* Event details */}
+          <div className="space-y-1 pt-3 border-t border-slate-200 font-mono text-xs mb-4">
+            <div className="flex items-start justify-between gap-4 py-2 border-b border-slate-100">
+              <span className="text-slate-500 flex items-center gap-1.5 shrink-0">
+                <Calendar size={13} className="text-cyan-700" />
+                DATE
               </span>
-              <span className="text-white font-bold">{currentEvent.date}</span>
+              <span className="text-slate-800 font-semibold text-right">
+                {currentEvent.date}
+              </span>
             </div>
 
-            <div className="flex items-center justify-between py-1 border-b border-white/5">
-              <span className="text-gray-400 flex items-center gap-1.5">
-                <Clock size={13} className="text-[#00f2fe]" /> TIME (SLT)
+            <div className="flex items-start justify-between gap-4 py-2 border-b border-slate-100">
+              <span className="text-slate-500 flex items-center gap-1.5 shrink-0">
+                <Clock size={13} className="text-cyan-700" />
+                TIME (SLT)
               </span>
-              <span className="text-white">{currentEvent.time}</span>
+              <span className="text-slate-800 text-right">
+                {currentEvent.time}
+              </span>
             </div>
 
-            <div className="flex items-center justify-between py-1 border-b border-white/5">
-              <span className="text-gray-400 flex items-center gap-1.5">
-                <MapPin size={13} className="text-[#00f2fe]" /> LOCATION
+            <div className="flex items-start justify-between gap-4 py-2 border-b border-slate-100">
+              <span className="text-slate-500 flex items-center gap-1.5 shrink-0">
+                <MapPin size={13} className="text-cyan-700" />
+                PLATFORM
               </span>
-              <span className="text-[#00f2fe] truncate max-w-[190px] text-right">
+              <span className="text-cyan-800 font-semibold truncate max-w-[190px] text-right">
                 {currentEvent.platform}
               </span>
             </div>
 
-            <div className="flex items-center justify-between py-1">
-              <span className="text-gray-400 flex items-center gap-1.5">
-                <Terminal size={13} className="text-[#00f2fe]" /> ACCESS
+            <div className="flex items-start justify-between gap-4 py-2">
+              <span className="text-slate-500 flex items-center gap-1.5 shrink-0">
+                <Terminal size={13} className="text-cyan-700" />
+                ACCESS
               </span>
-              <span className="text-emerald-400 font-bold truncate max-w-[190px] text-right">
+              <span className="text-emerald-700 font-semibold max-w-[190px] text-right">
                 {currentEvent.entry}
               </span>
             </div>
           </div>
 
-          {/* Action CTAs & Navigation Arrows */}
-          <div className="flex items-center justify-between gap-2.5 pt-1">
+          {/* Actions */}
+          <div className="flex items-center gap-2.5 pt-1">
             <button
-              onClick={() => onOpenRegister && onOpenRegister('individual')}
-              className="flex-grow py-2.5 px-4 bg-[#00f2fe] hover:bg-[#1bc2c5] text-black font-display font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_0_20px_rgba(0,242,254,0.3)] hover:shadow-[0_0_30px_rgba(0,242,254,0.6)] flex items-center justify-center gap-1.5 cursor-pointer"
+              type="button"
+              onClick={() => onOpenRegister?.('individual')}
+              className="flex-grow min-w-0 py-2.5 px-3 bg-[var(--color-primary)] hover:bg-[var(--color-electric-aqua)] text-white font-display font-bold text-xs uppercase tracking-wide rounded-lg transition-colors shadow-[0_4px_12px_rgba(var(--color-primary-rgb),0.18)] flex items-center justify-center gap-1.5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--color-secondary)]"
             >
-              Register Checkpoint <ArrowUpRight size={14} />
+              Register Checkpoint
+              <ArrowUpRight size={14} />
             </button>
 
-            {/* Quick Step Controls */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <button
+                type="button"
                 onClick={handlePrev}
-                aria-label="Previous Checkpoint"
-                className="p-2.5 rounded-xl border border-white/15 bg-black/40 hover:bg-white/10 text-white transition-all cursor-pointer"
+                aria-label="Previous checkpoint"
+                className="p-2.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-cyan-800 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700"
               >
                 <ChevronLeft size={16} />
               </button>
+
               <button
+                type="button"
                 onClick={handleNext}
-                aria-label="Next Checkpoint"
-                className="p-2.5 rounded-xl border border-white/15 bg-black/40 hover:bg-white/10 text-white transition-all cursor-pointer"
+                aria-label="Next checkpoint"
+                className="p-2.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-cyan-800 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700"
               >
                 <ChevronRight size={16} />
               </button>
@@ -552,6 +557,8 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
           </div>
         </div>
       </div>
+
+
 
       {/* 4B. Mobile Responsive Bottom Sheet / Drawer (Mobile Only) */}
       <div className="block md:hidden absolute bottom-3 left-3 right-3 z-30">
@@ -565,13 +572,13 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
             <div className="w-full flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#00f2fe] animate-pulse" />
-                <span className="font-mono text-[11px] font-bold text-[#00f2fe] uppercase">
+                <span className="font-mono text-[11px] font-bold text-[var(--color-primary)] uppercase">
                   CP {currentEvent.checkpoint} / 04: {currentEvent.session}
                 </span>
               </div>
               <button
                 aria-label="Toggle details"
-                className="text-gray-400 hover:text-white p-1"
+                className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
               >
                 {isMobileExpanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
               </button>
@@ -580,28 +587,28 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
 
           {/* Compact View */}
           <div className="flex items-baseline justify-between gap-2 mb-2">
-            <h3 className="font-display text-lg font-bold text-white truncate">
+            <h3 className="font-display text-lg font-bold text-[var(--color-text)] truncate">
               {currentEvent.title}
             </h3>
-            <span className="font-mono text-[10px] text-gray-400 whitespace-nowrap">
+            <span className="font-mono text-[10px] text-[var(--color-text-muted)] whitespace-nowrap">
               {currentEvent.date.split(' ')[0]} {currentEvent.date.split(' ')[1].slice(0, 3)}
             </span>
           </div>
 
           {/* Expandable Details Area */}
           {isMobileExpanded && (
-            <div className="space-y-2 mb-3 pt-2 border-t border-white/10 font-mono text-[11px] animate-fadeIn">
-              <p className="text-gray-300 font-body text-xs leading-relaxed">
+            <div className="space-y-2 mb-3 pt-2 border-t border-[var(--color-border)] font-mono text-[11px] animate-fadeIn">
+              <p className="text-[var(--color-text-muted)] font-body text-xs leading-relaxed">
                 {currentEvent.description}
               </p>
               <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
                 <div className="bg-white/5 p-1.5 rounded">
-                  <span className="text-gray-400 block">TIME (SLT)</span>
-                  <span className="text-white font-bold">{currentEvent.time}</span>
+                  <span className="text-[var(--color-text-muted)] block">TIME (SLT)</span>
+                  <span className="text-[var(--color-text)] font-bold">{currentEvent.time}</span>
                 </div>
                 <div className="bg-white/5 p-1.5 rounded">
-                  <span className="text-gray-400 block">PLATFORM</span>
-                  <span className="text-[#00f2fe] truncate block">{currentEvent.platform}</span>
+                  <span className="text-[var(--color-text-muted)] block">PLATFORM</span>
+                  <span className="text-[var(--color-primary)] truncate block">{currentEvent.platform}</span>
                 </div>
               </div>
             </div>
@@ -611,7 +618,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={() => onOpenRegister && onOpenRegister('individual')}
-              className="flex-grow py-2 px-3 bg-[#00f2fe] active:bg-[#1bc2c5] text-black font-display font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+              className="flex-grow py-2 px-3 bg-[var(--color-primary)] active:bg-[var(--color-electric-aqua)] text-white font-display font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
             >
               Register <ArrowUpRight size={13} />
             </button>
@@ -619,21 +626,21 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
             <button
               onClick={handlePrev}
               aria-label="Previous Checkpoint"
-              className="p-2 rounded-xl border border-white/20 bg-black/50 text-white"
+              className="p-2 rounded-xl border border-slate-900/10 bg-white/90 text-[var(--color-text)]"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={handleNext}
               aria-label="Next Checkpoint"
-              className="p-2 rounded-xl border border-white/20 bg-black/50 text-white"
+              className="p-2 rounded-xl border border-slate-900/10 bg-white/90 text-[var(--color-text)]"
             >
               <ChevronRight size={16} />
             </button>
           </div>
 
           {/* Quick 4-Step Indicator Bar on Mobile */}
-          <div className="grid grid-cols-4 gap-1.5 mt-2.5 pt-2 border-t border-white/10">
+          <div className="grid grid-cols-4 gap-1.5 mt-2.5 pt-2 border-t border-[var(--color-border)]">
             {timelineData.map((item, idx) => (
               <button
                 key={item.checkpoint}

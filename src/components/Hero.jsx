@@ -300,13 +300,6 @@ const Hero = ({ loading, onOpenRegister }) => {
 
       <div className="content-rail hero-content relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-8 py-9 sm:gap-10 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-x-10 lg:py-10 xl:gap-x-16">
         <div className="hero-copy relative z-20 flex min-w-0 max-w-2xl flex-col items-start text-left">
-          <div className="hero-kicker mb-5 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-600 sm:mb-7 sm:text-[10px]">
-            <Crosshair size={15} strokeWidth={1.7} className="text-[var(--color-primary)]" aria-hidden="true" />
-            <span>IEEE Student Branch · SLTC</span>
-            {/* <span className="h-px w-7 bg-[var(--color-primary)]/70" aria-hidden="true" />
-            <span className="hero-index text-slate-500">Mission 2026</span> */}
-          </div>
-
           <div ref={titleRef} className="w-full">
             <h1
               id="hero-title"
@@ -315,16 +308,16 @@ const Hero = ({ loading, onOpenRegister }) => {
               <span className="block overflow-hidden py-[0.05em]" data-hero-title-line>DECODE</span>
               <span className="block overflow-hidden py-[0.05em] text-[var(--color-secondary)]" data-hero-title-line>XTREME</span>
             </h1>
-            {/* <p className="hero-subtitle mt-5 font-display text-[clamp(0.95rem,2vw,1.35rem)] font-bold uppercase leading-tight tracking-[0.12em] text-[var(--color-primary)] sm:mt-6">
-              <span data-hero-scramble>The Animus Initiation</span>
-            </p> */}
           </div>
 
-          <p className="mt-5 max-w-lg text-sm leading-7 text-slate-700 sm:mt-6 sm:text-[15px] sm:leading-7">
-            Sharpen your algorithms, challenge your limits, and work as a team in an online programming experience built for the next generation of problem-solvers.
+          <p className="mt-3 max-w-lg font-mono text-xs leading-6 tracking-wide text-slate-700 sm:mt-4 sm:text-sm sm:leading-7">
+            <span className="mr-2 font-bold text-[var(--color-secondary)]" aria-hidden="true">
+              &gt;_
+            </span>
+            Sharpen your skills, solve boldly, and compete together.
           </p>
 
-          <div className="hero-date-line mt-6 grid w-full max-w-md grid-cols-1 gap-4 border-l-2 border-[var(--color-primary)] pl-4 sm:mt-7 sm:grid-cols-2 sm:gap-6">
+          <div className="hero-date-line mt-6 grid w-full max-w-md grid-cols-1 gap-4 border-l-2 border-[var(--color-primary)] pl-4 sm:mt-10 sm:grid-cols-2 sm:gap-6">
             <div>
               <p className="mb-1 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500">Event window</p>
               <p className="font-mono text-[11px] font-semibold uppercase leading-relaxed tracking-[0.08em] text-[#081922] sm:text-xs">

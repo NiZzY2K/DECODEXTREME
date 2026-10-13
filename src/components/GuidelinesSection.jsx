@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Shield, ChevronDown, CheckCircle2, Clock, Laptop, BookOpen, AlertTriangle, Users } from 'lucide-react';
+import { Shield, ChevronDown, Clock, Laptop, BookOpen, AlertTriangle, Users } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,117 +81,109 @@ const GuidelinesSection = () => {
     <section
       id="guide"
       ref={sectionRef}
-      className="section-dark relative w-full py-28 bg-transparent text-white overflow-hidden border-b border-white/10"
+      className="section-dark relative w-full overflow-hidden border-b border-[var(--color-border)] py-28"
     >
-      <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-25" />
-      <div className="absolute top-1/3 right-10 w-80 h-80 bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(var(--color-primary-rgb),0.12),transparent_26rem)]" />
 
       <div className="content-rail relative z-10">
-        
-        {/* CodeSprint Signature Section Header */}
         <div className="section-header">
           <div className="section-label guide-header-anim">
-            <span>DELEGATE PROTOCOLS // OPERATIONAL RULES</span>
+            <span>Delegate protocols // operational rules</span>
           </div>
 
           <div className="section-heading-wrap guide-header-anim">
-            <span className="section-heading-outline">DELEGATE GUIDE</span>
+            <span className="section-heading-outline">Delegate guide</span>
             <span className="section-heading-italic">Rules &amp; Readiness</span>
           </div>
 
           <p className="section-subtext guide-header-anim">
-            ESSENTIAL REQUIREMENTS FOR SLTC PREXTREME CHALLENGE DELEGATES
+            Essential requirements for SLTC PreXtreme challenge delegates
           </p>
         </div>
 
-        {/* Bento Grid: Event Day Protocol Quick Facts */}
-        <div className="guide-bento-grid grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <div className="guide-card-anim animus-card p-6 hud-bracket flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-white/5 text-[var(--color-primary)] shrink-0">
+        <div className="guide-bento-grid mb-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="guide-card-anim animus-card flex items-start gap-4 p-6 hud-bracket">
+            <div className="shrink-0 rounded-xl bg-[rgba(var(--color-primary-rgb),0.08)] p-3 text-[var(--color-primary)]">
               <Clock size={24} />
             </div>
             <div>
-              <div className="text-[11px] font-mono text-[var(--color-primary)] uppercase">24 OCTOBER 2026</div>
-              <h4 className="font-display font-bold text-lg text-white mt-0.5">8:00 AM Check-In</h4>
-              <p className="text-gray-400 text-xs mt-1 leading-relaxed">
+              <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-primary)]">24 October 2026</div>
+              <h4 className="mt-0.5 font-display text-lg font-bold text-[var(--color-text)]">8:00 AM check-in</h4>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
                 Coding kicks off sharp at 9:00 AM and ends at 6:00 PM (9 continuous hours).
               </p>
             </div>
           </div>
 
-          <div className="guide-card-anim animus-card p-6 hud-bracket flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-white/5 text-[var(--color-primary)] shrink-0">
+          <div className="guide-card-anim animus-card flex items-start gap-4 p-6 hud-bracket">
+            <div className="shrink-0 rounded-xl bg-[rgba(var(--color-primary-rgb),0.08)] p-3 text-[var(--color-primary)]">
               <Laptop size={24} />
             </div>
             <div>
-              <div className="text-[11px] font-mono text-[var(--color-primary)] uppercase">CONTEST ENVIRONMENT</div>
-              <h4 className="font-display font-bold text-lg text-white mt-0.5">HackerRank Platform</h4>
-              <p className="text-gray-400 text-xs mt-1 leading-relaxed">
+              <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-primary)]">Contest environment</div>
+              <h4 className="mt-0.5 font-display text-lg font-bold text-[var(--color-text)]">HackerRank platform</h4>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
                 Fully online format. Ensure steady power backup and uninterrupted broadband connectivity.
               </p>
             </div>
           </div>
 
-          <div className="guide-card-anim animus-card p-6 hud-bracket flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-white/5 text-[var(--color-primary)] shrink-0">
+          <div className="guide-card-anim animus-card flex items-start gap-4 p-6 hud-bracket">
+            <div className="shrink-0 rounded-xl bg-[rgba(var(--color-primary-rgb),0.08)] p-3 text-[var(--color-primary)]">
               <Users size={24} />
             </div>
             <div>
-              <div className="text-[11px] font-mono text-[var(--color-primary)] uppercase">MEMBERSHIP STATUS</div>
-              <h4 className="font-display font-bold text-lg text-white mt-0.5">Zero Membership Barrier</h4>
-              <p className="text-gray-400 text-xs mt-1 leading-relaxed">
+              <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-primary)]">Membership status</div>
+              <h4 className="mt-0.5 font-display text-lg font-bold text-[var(--color-text)]">Zero membership barrier</h4>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
                 Participation in DecodeXtreme is 100% free. No prior IEEE membership is required.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Expandable Rules Accordion Matrix */}
-        <div className="max-w-4xl mx-auto space-y-4">
-          <div className="text-xs font-mono uppercase text-gray-400 tracking-wider mb-2">
-            // OFFICIAL CONTEST REGULATIONS
+        <div className="mx-auto max-w-4xl space-y-4">
+          <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
+            // official contest regulations
           </div>
 
           {ruleTopics.map((item, idx) => {
             const isOpen = openIndex === idx;
             const Icon = item.icon;
             return (
-              <div
-                key={item.id}
-                className="animus-card overflow-hidden transition-all duration-300 hud-bracket"
-              >
+              <div key={item.id} className="animus-card overflow-hidden transition-all duration-300 hud-bracket">
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                  className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-white/[0.02]"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left transition-colors hover:bg-[rgba(255,255,255,0.14)]"
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`p-2.5 rounded-lg border transition-colors ${
+                    <div className={`rounded-lg border p-2.5 transition-colors ${
                       isOpen
-                        ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
-                        : 'border-white/10 bg-white/5 text-gray-400'
+                        ? 'border-[var(--color-primary)] bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)]'
+                        : 'border-[var(--color-border)] bg-[rgba(255,255,255,0.26)] text-[var(--color-text-muted)]'
                     }`}>
                       <Icon size={18} />
                     </div>
                     <div>
-                      <h4 className="font-display text-lg font-bold text-white">
+                      <h4 className="font-display text-lg font-bold text-[var(--color-text)]">
                         {item.title}
                       </h4>
-                      <p className="text-xs text-gray-400 font-mono mt-0.5">
+                      <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                         {item.summary}
                       </p>
                     </div>
                   </div>
 
-                  <div className={`p-2 rounded-full text-gray-400 transition-transform duration-300 ${
-                    isOpen ? 'rotate-180 text-[var(--color-primary)]' : ''
+                  <div className={`rounded-full p-2 transition-transform duration-300 ${
+                    isOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'
                   }`}>
                     <ChevronDown size={18} />
                   </div>
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 pt-2 text-sm text-gray-300 font-body leading-relaxed border-t border-white/5 bg-black/20">
+                  <div className="border-t border-[var(--color-border)] bg-[rgba(255,255,255,0.22)] px-6 pb-6 pt-4 font-body text-sm leading-relaxed text-[var(--color-text-muted)]">
                     <p>{item.content}</p>
                   </div>
                 )}

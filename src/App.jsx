@@ -41,13 +41,13 @@ const Home = ({ isLoading, onOpenRegister }) => (
       onOpenRegister={() => onOpenRegister('individual')}
     />
 
-    <AboutSection />
+    <AboutSection onOpenRegister={onOpenRegister} />
 
     <TimelineFullscreenMap onOpenRegister={onOpenRegister} />
 
-    <ServicesSection
+    {/* <ServicesSection
       onOpenRegister={() => onOpenRegister('individual')}
-    />
+    /> */}
 
     <PrizesSection />
     <GuidelinesSection />

@@ -312,3 +312,39 @@ html[data-theme="light"] .timeline-fullscreen {
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
 }
+
+
+/* Light tactical dossier for the ice-white mission map */
+.hud-dossier-card-light {
+  position: relative;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-top: 2px solid rgba(8, 145, 178, 0.65);
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.14),
+    0 4px 14px rgba(15, 23, 42, 0.07),
+    0 0 24px rgba(8, 145, 178, 0.05);
+
+  transition:
+    box-shadow 250ms ease,
+    border-color 250ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hud-dossier-card-light:hover {
+  border-color: rgba(8, 145, 178, 0.35);
+  box-shadow:
+    0 24px 55px rgba(15, 23, 42, 0.17),
+    0 6px 18px rgba(8, 145, 178, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-dossier-card-light {
+    transition: none;
+  }
+}

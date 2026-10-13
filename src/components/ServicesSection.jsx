@@ -277,12 +277,12 @@ const ServicesSection = ({ onOpenRegister }) => {
     <section
       id="program"
       ref={sectionRef}
-      className="services-section section-dark relative isolate w-full overflow-hidden border-b border-slate-900/10 bg-black py-28"
+      className="services-section section-dark relative isolate w-full overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] py-28"
     >
       {/* Full-section battlefield background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat brightness-110"
+        className="pointer-events-none absolute inset-0 scale-120 z-0 bg-cover bg-center bg-no-repeat brightness-110"
         style={{
           backgroundImage:
             'url("/backgrounds/servicessection/animus-battlefield-bg.jpg")',
@@ -291,7 +291,7 @@ const ServicesSection = ({ onOpenRegister }) => {
       {/* Lighter overlay: keeps the image visible and text readable */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-black/15 via-black/5 to-black/30"
+        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-white/55 via-white/35 to-white/65"
       />
       <div className="pointer-events-none absolute inset-0 z-[1] bg-cyber-grid opacity-30" />
       <div className="pointer-events-none absolute bottom-10 left-10 z-[1] h-96 w-96 rounded-full bg-(--color-primary)/10 blur-[140px]" />
@@ -299,13 +299,13 @@ const ServicesSection = ({ onOpenRegister }) => {
         <div className="prog-header mb-10 text-left sm:mb-14">
           <h2 className="prog-heading max-w-4xl font-display text-[clamp(3.8rem,12vw,8rem)] font-bold uppercase leading-[0.8] tracking-[-0.08em]">
             <span className="-my-[0.1em] block overflow-hidden py-[0.1em]">
-              <span className="prog-heading-word block text-[#071b24] will-change-transform drop-shadow-[0_1px_0_rgba(255,255,255,0.16)]">THE</span>
+              <span className="prog-heading-word block text-[var(--color-text)] will-change-transform drop-shadow-[0_1px_0_rgba(255,255,255,0.16)]">THE</span>
             </span>
             <span className="-my-[0.1em] block overflow-hidden py-[0.1em]">
-              <span className="prog-heading-word block text-[#007b83] will-change-transform drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">PROGRAM</span>
+              <span className="prog-heading-word block text-[var(--color-primary)] will-change-transform drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">PROGRAM</span>
             </span>
           </h2>
-          <p className="prog-header-note mt-6 inline-block max-w-xl border-l-2 border-[#009da5] bg-[#e5f5f5]/70 py-2 pl-4 pr-3 font-mono text-[10px] font-semibold uppercase leading-[1.7] tracking-[0.12em] text-[#102d36] shadow-[0_6px_24px_rgba(0,0,0,0.08)] backdrop-blur-sm sm:mt-8 sm:text-[11px]">
+          <p className="prog-header-note mt-6 inline-block max-w-xl border-l-2 border-[var(--color-primary)] bg-[rgba(255,255,255,0.58)] py-2 pl-4 pr-3 font-mono text-[10px] font-semibold uppercase leading-[1.7] tracking-[0.12em] text-[var(--color-text)] shadow-[0_6px_24px_rgba(8,25,34,0.08)] backdrop-blur-sm sm:mt-8 sm:text-[11px]">
             FOUR PHASES · ONE FINAL CHALLENGE · FREE TO JOIN
           </p>
         </div>
@@ -397,13 +397,13 @@ const ServicesSection = ({ onOpenRegister }) => {
                 <div className="relative z-10 flex items-center justify-between gap-2">
                   <span
                     className={`inline-flex items-center gap-1.5 font-mono text-[8px] font-bold uppercase tracking-[0.1em] ${
-                      item.isChallenge ? 'text-rose-100' : 'text-cyan-50'
+                      item.isChallenge ? 'text-rose-700' : 'text-[var(--color-primary)]'
                     }`}
                   >
                     <span
                       aria-hidden="true"
                       className={`h-1.5 w-1.5 rounded-full ${
-                        item.isChallenge ? 'bg-rose-400' : 'bg-cyan-300'
+                        item.isChallenge ? 'bg-rose-500' : 'bg-[var(--color-primary)]'
                       }`}
                     />
                     {item.isChallenge ? 'Final event' : 'Scheduled'}
@@ -429,7 +429,7 @@ const ServicesSection = ({ onOpenRegister }) => {
                   <h3
                     id={`session-title-${item.id}`}
                     data-program-scramble
-                    className="prog-panel-item mb-2 font-display text-xl font-bold uppercase leading-[1] tracking-[-0.03em] text-[#071b24] transition-colors duration-300 group-hover:text-(--panel-accent) sm:text-[1.35rem]"
+                    className="prog-panel-item mb-2 font-display text-xl font-bold uppercase leading-[1] tracking-[-0.03em] text-[var(--color-text)] transition-colors duration-300 group-hover:text-(--panel-accent) sm:text-[1.35rem]"
                   >
                     {item.title}
                   </h3>
@@ -446,7 +446,7 @@ const ServicesSection = ({ onOpenRegister }) => {
                     <p data-program-scramble>{item.time}</p>
                     <p
                       data-program-scramble
-                      className={`font-bold ${item.isChallenge ? 'text-rose-700' : 'text-[#007b83]'}`}
+                      className={`font-bold ${item.isChallenge ? 'text-rose-700' : 'text-[var(--color-primary)]'}`}
                     >
                       {item.platform}
                     </p>
@@ -472,9 +472,9 @@ const ServicesSection = ({ onOpenRegister }) => {
           })}
         </div>
         {/* Resources & preparation footnote */}
-        <div className="prog-footnote mt-8 flex flex-col items-start justify-between gap-6 border border-cyan-100/20 bg-[#04151d]/75 p-5 font-mono text-xs leading-relaxed text-slate-200/85 shadow-[0_12px_36px_rgba(0,0,0,0.22)] backdrop-blur-md sm:p-6 md:flex-row md:items-center">
+        <div className="prog-footnote mt-8 flex flex-col items-start justify-between gap-6 border border-[var(--color-border)] bg-[rgba(255,255,255,0.55)] p-5 font-mono text-xs leading-relaxed text-[var(--color-text-muted)] shadow-[0_12px_36px_rgba(8,25,34,0.08)] backdrop-blur-md sm:p-6 md:flex-row md:items-center">
           <div className="flex items-start gap-3">
-            <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-cyan-200" aria-hidden="true" />
+            <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[var(--color-primary)]" aria-hidden="true" />
             <span>
               Preparation guidelines, session slides, and HackerRank sample questions will be shared with registered delegates.
             </span>
@@ -488,7 +488,7 @@ const ServicesSection = ({ onOpenRegister }) => {
                 block: 'start',
               });
             }}
-            className="whitespace-nowrap font-bold text-cyan-100 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="whitespace-nowrap font-bold text-[var(--color-primary)] underline-offset-4 transition-colors hover:text-[var(--color-secondary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-secondary)]"
           >
             Read Delegate Guide →
           </button>

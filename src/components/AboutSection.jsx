@@ -10,7 +10,6 @@ const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 // Files inside public/ are served from the site root.
 const ABOUT_BACKGROUND_IMAGE_SRC = '/backgrounds/about/animus-eaglevision-bg.jpg';
-const ABOUT_LEAD_IMAGE_SRC = '/backgrounds/about/projectchair.jpeg';
 
 const LEARNING_TRACKS = [
   {
@@ -193,7 +192,7 @@ const buildFlowReveals = (section) => {
   buildScrambleReveals(section);
 };
 
-const AboutSection = () => {
+const AboutSection = ({ onOpenRegister }) => {
   const sectionRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -242,7 +241,12 @@ const AboutSection = () => {
   }, []);
 
   const handleJoinClick = () => {
-    const target = document.getElementById('contact');
+    if (onOpenRegister) {
+      onOpenRegister('individual');
+      return;
+    }
+
+    const target = document.getElementById('operatives') || document.getElementById('contact');
     if (!target) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -254,38 +258,38 @@ const AboutSection = () => {
       id="about"
       ref={sectionRef}
       aria-labelledby="about-heading"
-      className="about-section section-dark relative isolate flex w-full flex-col overflow-hidden border-b border-white/10 bg-[#04090d] text-white"
+      className="about-section section-light relative isolate flex w-full flex-col overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
     >
       {/* Atmospheric background. The lead image below is deliberately not masked, tinted, or cropped. */}
       <div
         aria-hidden="true"
         className="abx-bg pointer-events-none absolute -inset-6 -z-30 bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(180deg, rgba(3,8,12,0.66) 0%, rgba(3,8,12,0.46) 46%, rgba(3,8,12,0.92) 100%), url("${ABOUT_BACKGROUND_IMAGE_SRC}")`,
+          backgroundImage: `linear-gradient(180deg, rgba(244,250,251,0.86) 0%, rgba(244,250,251,0.7) 46%, rgba(244,250,251,0.94) 100%), url("${ABOUT_BACKGROUND_IMAGE_SRC}")`,
         }}
       />
       <div
         aria-hidden="true"
-        className="abx-glow pointer-events-none absolute right-[11%] top-[6%] -z-20 h-64 w-64 rounded-full bg-(--color-primary)/20 blur-[105px] sm:h-80 sm:w-80 sm:blur-[120px]"
+        className="abx-glow pointer-events-none absolute right-[11%] top-[6%] -z-20 h-64 w-64 rounded-full bg-(--color-primary)/18 blur-[105px] sm:h-80 sm:w-80 sm:blur-[120px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(2,6,9,0.74)_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(255,255,255,0.42)_100%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.022)_0_1px,transparent_1px_3px)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(0deg,rgba(15,23,42,0.02)_0_1px,transparent_1px_3px)]"
       />
 
       {/* Section metadata */}
       <header className="relative z-20 w-full px-5 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 xl:pt-20">
         <div className="mx-auto flex w-full max-w-[90rem] items-start justify-between gap-5">
           <div className="min-w-0">
-            <p className="abx-reveal font-mono text-[9px] uppercase tracking-[0.16em] text-white/45 sm:text-[10px] sm:tracking-[0.2em]">
+            <p className="abx-reveal font-mono text-[9px] uppercase tracking-[0.16em] text-slate-700/75 sm:text-[10px] sm:tracking-[0.2em]">
               The Animus training network
             </p>
           </div>
-          <p className="abx-reveal hidden shrink-0 text-right font-mono text-[9px] uppercase leading-[1.8] tracking-[0.16em] text-white/45 sm:block sm:text-[10px]">
+          <p className="abx-reveal hidden shrink-0 text-right font-mono text-[9px] uppercase leading-[1.8] tracking-[0.16em] text-slate-700/75 sm:block sm:text-[10px]">
             IEEE Student Branch of SLTC
             <br />
             2026 / Online
@@ -293,14 +297,14 @@ const AboutSection = () => {
         </div>
       </header>
 
-      {/* Desktop: title on the left, full uncropped lead image in the centre, details and protocols on the right.
+      {/* Desktop: the text flows across the section in two balanced columns without any lead image.
           Mobile: the same content becomes a readable vertical sequence. */}
       <main className="relative z-10 mx-auto w-full max-w-[90rem] flex-1 px-5 sm:px-8 lg:px-10">
         <div className="relative mx-auto grid w-full grid-cols-1 items-center gap-8 py-8 sm:gap-10 sm:py-10 md:grid-cols-2 md:gap-x-8 xl:min-h-[43rem] xl:grid-cols-12 xl:items-stretch xl:gap-x-7 xl:py-8">
           {/* Left column: headline and supporting copy */}
-          <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-3 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
+          <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-5 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
             <div className="max-w-[24rem]">
-              <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-white/45 sm:text-[10px]">
+              <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-700/75 sm:text-[10px]">
                 Think beyond the obvious
               </p>
               <h2
@@ -313,13 +317,13 @@ const AboutSection = () => {
                   </span>
                 ))}
               </h2>
-              <p data-about-scramble className="abx-intro-text mt-5 max-w-sm font-body text-[13px] leading-6 text-white/70 sm:text-sm">
+              <p data-about-scramble className="abx-intro-text mt-5 max-w-sm font-body text-[13px] leading-6 text-slate-700 sm:text-sm">
                 DecodeXtreme is an online programming experience by the IEEE Student Branch of SLTC, helping student teams sharpen their algorithms, strategy, and confidence.
               </p>
               <button
                 type="button"
                 onClick={handleJoinClick}
-                className="mt-6 inline-flex min-h-11 items-center justify-center gap-3 border border-(--color-primary) bg-(--color-primary) px-5 py-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[#052126] transition duration-200 hover:-translate-y-0.5 hover:bg-(--color-electric-aqua) hover:shadow-[0_8px_28px_rgba(0,255,230,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white active:translate-y-0 sm:mt-7"
+                className="mt-6 inline-flex min-h-11 items-center justify-center gap-3 border border-(--color-primary) bg-(--color-primary) px-5 py-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white transition duration-200 hover:-translate-y-0.5 hover:bg-(--color-electric-aqua) hover:shadow-[0_8px_28px_rgba(var(--color-primary-rgb),0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-secondary)] active:translate-y-0 sm:mt-7"
               >
                 <span>Join the mission</span>
                 <ArrowUpRight size={15} aria-hidden="true" />
@@ -327,7 +331,7 @@ const AboutSection = () => {
             </div>
 
             {/* Recruitment and supporting text sit low on the left on desktop. */}
-            <aside className="abx-callout abx-reveal mt-8 w-full max-w-[22rem] border-t border-white/20 pt-4 sm:mt-10 xl:mt-12">
+            <aside className="abx-callout abx-reveal mt-8 w-full max-w-[22rem] border-t border-slate-300 pt-4 sm:mt-10 xl:mt-12">
               <div className="mb-3 flex items-center gap-3">
                 <span className="relative block h-5 w-10 shrink-0 overflow-hidden border border-(--color-primary)/70">
                   <span className="abx-glitch-bar absolute left-0 top-1 h-1.5 w-1/2 bg-(--color-primary)" />
@@ -335,83 +339,43 @@ const AboutSection = () => {
                 </span>
                 <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary)">Now recruiting</p>
               </div>
-              <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] sm:text-4xl">
+              <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] text-slate-900 sm:text-4xl">
                 Decoders <span className="text-(--color-primary)">wanted.</span>
               </p>
-              <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-white/55 sm:text-[10px]">
+              <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-slate-700/75 sm:text-[10px]">
                 <ShieldCheck size={15} className="mt-px shrink-0 text-(--color-primary)" aria-hidden="true" />
                 <span data-about-scramble>Open access · Sri Lanka · 100% online</span>
               </p>
             </aside>
           </div>
 
-          {/* Centre: no frame, mask, overlay, filter, or object-cover. Keep the composed artwork intact. */}
-          <div className="abx-lead order-2 relative mx-auto h-[min(78svh,37rem)] min-h-[23rem] w-full max-w-[34rem] md:col-span-1 md:h-[36rem] md:max-w-none xl:col-span-5 xl:col-start-4 xl:row-start-1 xl:h-auto xl:min-h-[43rem] xl:w-full xl:self-stretch">
-            <div className="abx-character abx-reveal pointer-events-none absolute inset-0 z-0">
-              <div className="abx-character-parallax h-full w-full">
-                <img
-                  src={ABOUT_LEAD_IMAGE_SRC}
-                  alt="DecodeXtreme project chairperson"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  onError={(event) => {
-                    event.currentTarget.style.visibility = 'hidden';
-                  }}
-                  className="block h-full w-full bg-transparent object-contain object-bottom"
-                />
-              </div>
-            </div>
-            <span aria-hidden="true" className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/35 xl:flex">
-              <span className="h-px w-6 bg-(--color-primary)/70" />
-              Character profile
-              <span className="h-px w-6 bg-(--color-primary)/70" />
-            </span>
-          </div>
-
           {/* Right column: leadership details, then the three protocols vertically. */}
-          <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-4 xl:col-start-9 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
-            <section className="abx-lead-card abx-reveal relative border-l-2 border-(--color-primary) bg-[#04090d]/55 py-4 pl-5 pr-2 sm:py-5 sm:pl-6 sm:pr-4">
-              <div className="absolute -left-[2px] top-0 h-8 w-[2px] bg-white/70" aria-hidden="true" />
-              <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary) sm:text-[10px]">
-                Project leadership // 01
-              </p>
-              <h3 data-about-scramble className="mt-2 font-display text-2xl font-bold uppercase leading-[0.95] tracking-[-0.04em] text-white sm:text-3xl">
-                Project Chairperson
-              </h3>
-              <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.11em] text-white/65 sm:text-[10px] sm:tracking-[0.13em]">
-                Lead Coordinator · DecodeXtreme 2026
-              </p>
-              <p data-about-scramble className="mt-3 max-w-lg text-xs leading-[1.7] text-white/60 sm:text-[13px]">
-                Guiding the initiative from concept to competition and connecting the student community with the skills and confidence to enter the IEEEXtreme arena.
-              </p>
-            </section>
-
+          <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-7 xl:col-start-6 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
             <section className="mt-8 sm:mt-10 xl:mt-9" aria-labelledby="about-protocols-heading">
               <div className="abx-reveal mb-4 flex items-center gap-3 sm:mb-5">
                 <span aria-hidden="true" className="h-px w-7 shrink-0 bg-(--color-primary)" />
-                <h3 id="about-protocols-heading" className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-white/65 sm:text-[10px] sm:tracking-[0.2em]">
+                <h3 id="about-protocols-heading" className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-slate-700/80 sm:text-[10px] sm:tracking-[0.2em]">
                   3 training protocols
                 </h3>
               </div>
 
               <div className="space-y-5 sm:space-y-6">
                 {LEARNING_TRACKS.map((track) => (
-                  <article key={track.num} className="abx-track abx-reveal group relative min-w-0 border-t border-white/20 pt-4 transition-colors duration-300 hover:border-(--color-primary)/80 sm:pt-5">
+                  <article key={track.num} className="abx-track abx-reveal group relative min-w-0 border-t border-slate-300 pt-4 transition-colors duration-300 hover:border-(--color-primary)/80 sm:pt-5">
                     <span aria-hidden="true" className="absolute -top-[7px] left-0 text-(--color-primary)">
                       <X size={13} strokeWidth={2.5} />
                     </span>
                     <div className="mb-2 flex items-start justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.1em] text-(--color-primary) sm:tracking-[0.13em]">
                       <span>{track.badge}</span>
-                      <span className="shrink-0 text-white/40">{track.num}</span>
+                      <span className="shrink-0 text-slate-500">{track.num}</span>
                     </div>
-                    <h4 className="font-display text-base font-bold uppercase leading-tight tracking-[-0.025em] text-white sm:text-lg">
+                    <h4 className="font-display text-base font-bold uppercase leading-tight tracking-[-0.025em] text-slate-900 sm:text-lg">
                       {track.title}
                     </h4>
-                    <p data-about-scramble className="mt-2 text-[11px] leading-[1.7] text-white/60 sm:text-xs sm:leading-[1.75]">
+                    <p data-about-scramble className="mt-2 text-[11px] leading-[1.7] text-slate-700 sm:text-xs sm:leading-[1.75]">
                       {track.desc}
                     </p>
-                    <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.1em] text-white/40 sm:tracking-[0.12em]">
+                    <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.1em] text-slate-500 sm:tracking-[0.12em]">
                       {track.tag}
                     </p>
                   </article>
