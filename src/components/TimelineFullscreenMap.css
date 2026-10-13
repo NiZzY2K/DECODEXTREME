@@ -2,7 +2,7 @@
 
 .timeline-fullscreen {
   position: relative;
-  background-color: #f0f0ee;
+  background-color: transparent;
   min-height: 80vh;
   min-height: 80dvh;
   width: 100%;
@@ -11,7 +11,7 @@
 }
 
 html[data-theme="light"] .timeline-fullscreen {
-  background-color: #f0f0ee;
+  background-color: transparent;
   color: #090d16;
 }
 
@@ -24,16 +24,20 @@ html[data-theme="light"] .timeline-fullscreen {
   aspect-ratio: 2 / 1;
   translate: -50% -50%;
   will-change: transform;
+  /* Semi-transparent wash so cartography is legible over the global AC background */
+  background-color: rgba(244, 250, 251, 0.52);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .animus-cartography {
-  --map-ink: #777874;
-  --map-land: #dededb;
-  --map-grid: rgba(112, 113, 108, 0.06);
+  --map-ink: #536b73;
+  --map-land: #dcebee;
+  --map-grid: rgba(8, 126, 135, 0.07);
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background-color: #eeeeec;
+  background-color: transparent;
   background-image:
     linear-gradient(var(--map-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--map-grid) 1px, transparent 1px);
@@ -128,7 +132,7 @@ html[data-theme="light"] .timeline-fullscreen {
 .city-canal {
   position: absolute;
   inset: 0;
-  background: #f9f9f7;
+  background: transparent;
 }
 
 .city-canal--grand {
@@ -240,8 +244,8 @@ html[data-theme="light"] .timeline-fullscreen {
 .white-map-vignette {
   background: radial-gradient(ellipse at center,
       transparent 55%,
-  rgba(240, 240, 238, 0.4) 80%,
-  rgba(240, 240, 238, 0.9) 100%);
+      rgba(244, 250, 251, 0.4) 80%,
+      rgba(244, 250, 251, 0.9) 100%);
   pointer-events: none;
 }
 

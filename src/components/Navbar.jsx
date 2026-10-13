@@ -87,6 +87,7 @@ const Navbar = ({
       <NavOverlay
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        onNavigate={scrollTo}
         onOpenRegister={handleRegister}
       />
 
@@ -128,7 +129,7 @@ const Navbar = ({
             </Link>
 
             {/* Desktop section navigation */}
-            <div className="nav-angular hidden items-center gap-0.5 px-2 py-1.5 lg:flex">
+            <div className="nav-angular hidden items-center gap-0.5 px-2 py-1.5 xl:flex">
               {NAV_ITEMS.map((item, index) => (
                 <span key={item.id} className="flex items-center">
                   {index > 0 && (
@@ -149,7 +150,7 @@ const Navbar = ({
             </div>
 
             {/* Desktop actions */}
-            <div className="hidden shrink-0 items-center gap-3 md:flex">
+            <div className="hidden shrink-0 items-center gap-3 xl:flex">
               {audioAvailable ? (
                 <SoundAmbiance
                   isMuted={isMuted}
@@ -176,14 +177,14 @@ const Navbar = ({
             </div>
 
             {/* Mobile actions */}
-            <div className="flex shrink-0 items-center gap-1 md:hidden sm:gap-2">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2 xl:hidden">
               {audioAvailable ? (
                 <button
                   type="button"
                   onClick={onToggleAudio}
                   aria-label={isMuted ? 'Enable background ambience' : 'Mute background ambience'}
                   aria-pressed={!isMuted}
-                  className="nav-angular-button inline-flex h-8 w-8 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-700 transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] sm:h-9 sm:w-9"
+                  className="nav-angular-button inline-flex h-11 w-11 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-700 transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)]"
                 >
                   {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 </button>
@@ -191,7 +192,7 @@ const Navbar = ({
                 <span
                   title="Background ambience coming soon"
                   aria-label="Background ambience coming soon"
-                  className="nav-angular-button inline-flex h-8 w-8 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-400 sm:h-9 sm:w-9"
+                  className="nav-angular-button inline-flex h-11 w-11 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-400"
                 >
                   <AudioLines size={16} aria-hidden="true" />
                 </span>
@@ -200,7 +201,7 @@ const Navbar = ({
               <button
                 type="button"
                 onClick={handleRegister}
-                className="nav-angular-button inline-flex min-h-8 items-center justify-center border border-[var(--color-secondary)] bg-[var(--color-primary)] px-2.5 py-1.5 font-display text-[9px] font-bold uppercase tracking-[0.04em] text-[#052126] transition-colors hover:bg-[var(--color-electric-aqua)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] sm:min-h-9 sm:px-3.5 sm:py-2 sm:text-[10px] sm:tracking-[0.06em]"
+                className="nav-angular-button inline-flex min-h-11 items-center justify-center border border-[var(--color-secondary)] bg-[var(--color-primary)] px-2.5 py-2 font-display text-[10px] font-bold uppercase tracking-[0.04em] text-[#052126] transition-colors hover:bg-[var(--color-electric-aqua)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] sm:px-3.5 sm:tracking-[0.06em]"
               >
                 Register
               </button>
@@ -208,7 +209,7 @@ const Navbar = ({
               <button
                 type="button"
                 onClick={() => setIsOpen((open) => !open)}
-                className="nav-angular-button inline-flex h-8 w-8 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-800 transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] sm:h-10 sm:w-10"
+                className="nav-angular-button inline-flex h-11 w-11 items-center justify-center border border-slate-900/15 bg-white/90 text-slate-800 transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)]"
                 aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={isOpen}
               >

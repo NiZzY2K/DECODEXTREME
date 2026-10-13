@@ -277,24 +277,10 @@ const ServicesSection = ({ onOpenRegister }) => {
     <section
       id="program"
       ref={sectionRef}
-      className="services-section section-dark relative isolate w-full overflow-hidden border-b border-slate-900/10 bg-black py-28"
+      className="services-section relative isolate w-full overflow-hidden border-b border-slate-900/10 bg-transparent py-28 text-[#081922]"
     >
-      {/* Full-section battlefield background */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat brightness-110"
-        style={{
-          backgroundImage:
-            'url("/backgrounds/servicessection/animus-battlefield-bg.jpg")',
-        }}
-      />
-      {/* Lighter overlay: keeps the image visible and text readable */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-black/15 via-black/5 to-black/30"
-      />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-cyber-grid opacity-30" />
-      <div className="pointer-events-none absolute bottom-10 left-10 z-[1] h-96 w-96 rounded-full bg-(--color-primary)/10 blur-[140px]" />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-cyber-grid opacity-15" />
+      <div className="pointer-events-none absolute bottom-10 left-10 z-[1] h-96 w-96 rounded-full bg-[var(--color-primary)]/10 blur-[140px]" />
       <div className="content-rail relative z-10">
         <div className="prog-header mb-10 text-left sm:mb-14">
           <h2 className="prog-heading max-w-4xl font-display text-[clamp(3.8rem,12vw,8rem)] font-bold uppercase leading-[0.8] tracking-[-0.08em]">

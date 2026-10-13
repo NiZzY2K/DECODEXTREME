@@ -96,33 +96,34 @@ const RegistrationModal = ({ isOpen, onClose, defaultType = 'individual', defaul
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-3xl my-8 bg-[#070b10] border border-white/15 rounded-2xl shadow-2xl overflow-hidden hud-bracket text-white">
+    <div className="registration-overlay fixed inset-0 z-[200] flex h-dvh items-start justify-center overflow-y-auto overscroll-contain bg-black/80 p-3 backdrop-blur-md sm:p-6">
+      <div role="dialog" aria-modal="true" aria-label="Event registration" className="registration-dialog relative my-auto w-full min-w-0 max-w-3xl shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#070b10] text-white shadow-2xl">
         
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
-            <span className="font-mono text-xs text-[var(--color-primary)] tracking-widest uppercase">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10 bg-white/[0.02] sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--color-primary)] animate-pulse" />
+            <span className="font-mono text-[10px] text-[var(--color-primary)] tracking-normal uppercase sm:text-xs sm:tracking-widest">
               ANIMUS PROTOCOL // REGISTRATION ENGINE
             </span>
           </div>
           <button
             onClick={resetModal}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Close registration"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Modal Content */}
-        <div className="p-6 md:p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           
           {/* Step 1: Form Filling */}
           {step === 1 && (
             <div>
               {/* Type Switcher Tabs */}
-              <div className="grid grid-cols-2 gap-3 mb-8 p-1 rounded-xl bg-white/5 border border-white/10">
+              <div className="grid grid-cols-1 gap-2 mb-6 p-1 rounded-lg bg-white/5 border border-white/10 sm:grid-cols-2 sm:gap-3 sm:mb-8">
                 <button
                   type="button"
                   onClick={() => { setRegType('individual'); setErrors({}); }}

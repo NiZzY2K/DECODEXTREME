@@ -255,7 +255,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       ref={sectionRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="timeline-fullscreen relative w-full h-[100dvh] overflow-hidden select-none bg-white text-[#090d16]"
+      className="timeline-fullscreen relative w-full h-[100dvh] overflow-hidden select-none bg-transparent text-[#090d16]"
       aria-label="DecodeXtreme 2026 Fullscreen Mission Map"
     >
       {/* 1. Fullscreen Map Background Layer (Kept Natural White) */}

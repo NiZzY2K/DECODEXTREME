@@ -147,7 +147,7 @@ const NavOverlay = ({ isOpen, onClose, onNavigate, onOpenRegister }) => {
       aria-label="Site navigation"
       aria-hidden={!isOpen}
       inert={!isOpen}
-      className="fixed inset-0 z-40 flex h-[100svh] w-full flex-col justify-start overflow-y-auto bg-[#040608]/[0.98] px-5 pb-10 pt-24 text-white shadow-2xl backdrop-blur-2xl will-change-transform max-md:bg-[var(--color-bg)] max-md:text-[#081922] sm:px-8 sm:pb-12 sm:pt-28 md:justify-center md:px-16 md:pt-12 xl:px-24"
+      className="fixed inset-0 z-40 flex h-dvh w-full flex-col justify-start overflow-y-auto overscroll-contain bg-[var(--color-bg)] px-5 pb-10 pt-24 text-[#081922] shadow-2xl backdrop-blur-2xl will-change-transform sm:px-8 sm:pb-12 sm:pt-28 md:px-16 xl:px-24"
       style={{ transform: 'translateX(100%)' }}
     >
       <div className="mx-auto w-full max-w-5xl">
@@ -163,12 +163,12 @@ const NavOverlay = ({ isOpen, onClose, onNavigate, onOpenRegister }) => {
               type="button"
               data-overlay-link
               onClick={() => handleNavClick(item.target)}
-              className="group nav-angular-button flex w-full items-baseline gap-3 border-b border-white/10 py-3 text-left text-white transition-colors hover:bg-white/[0.04] hover:text-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] max-md:border-slate-900/10 max-md:text-[#081922] max-md:hover:bg-[var(--color-bg-elevated)] sm:gap-4 sm:py-3.5"
+              className="group nav-angular-button flex w-full items-baseline gap-3 border-b border-slate-900/10 py-3 text-left text-[#081922] transition-colors hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] sm:gap-4 sm:py-3.5"
             >
               <span className="w-6 shrink-0 font-mono text-[10px] text-[var(--color-primary)] opacity-70 sm:w-8 sm:text-xs">
                 {item.num}
               </span>
-              <span className="font-display text-[clamp(1.35rem,5.8vw,2.5rem)] font-bold leading-tight tracking-[-0.035em] sm:text-4xl md:text-5xl">
+              <span className="min-w-0 break-words font-display text-xl font-bold leading-tight tracking-normal sm:text-3xl md:text-4xl">
                 {item.label}
               </span>
               <ArrowUpRight
@@ -181,7 +181,7 @@ const NavOverlay = ({ isOpen, onClose, onNavigate, onOpenRegister }) => {
         </div>
 
         <div className="flex flex-col items-start gap-4 pt-7 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
-          <p className="max-w-sm font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-white/45 max-md:text-slate-500 sm:text-[10px]">
+          <p className="max-w-sm font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-slate-500 sm:text-[10px]">
             DecodeXtreme 2026 · IEEE Student Branch of SLTC
           </p>
           <button

@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowDown, Crosshair, MoveRight } from 'lucide-react';
 import gsap from 'gsap';
 
-import heroImage from '../assets/hero.png';
 import sbLogo from '../assets/sb-logo-color.webp';
 import csLogo from '../assets/IEEE-CS_LogoTM-orange.webp';
 
@@ -276,26 +275,23 @@ const Hero = ({ loading, onOpenRegister }) => {
     <section
       ref={containerRef}
       aria-labelledby="hero-title"
-      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden bg-[#e8eff0] pt-24 text-[#081922] sm:pt-28 lg:pt-24"
+      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden bg-transparent pt-24 text-[#081922] sm:pt-28 lg:pt-24"
     >
-      {/* Full-bleed cinematic backdrop. Content contrast does not depend on the video frame. */}
+      {/* Full-bleed cinematic backdrop with soft transparency revealing common Animus background */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
         <video
           ref={videoRef}
           src={backgroundVideoSrc || undefined}
-          poster={heroImage}
           muted
           loop
           playsInline
           preload="none"
           tabIndex={-1}
-          className="absolute inset-0 h-full w-full scale-[1.02] object-cover object-[center_38%] opacity-70 saturate-[0.72] sm:opacity-85"
+          className="absolute inset-0 h-full w-full scale-[1.02] object-cover object-[center_38%] opacity-35 saturate-[0.7] sm:opacity-45"
         />
-        <div className="absolute inset-0 bg-[#e8eff0]/55" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(239,245,246,0.97)_0%,rgba(239,245,246,0.9)_34%,rgba(239,245,246,0.52)_67%,rgba(239,245,246,0.3)_100%)] max-lg:bg-[linear-gradient(180deg,rgba(239,245,246,0.86)_0%,rgba(239,245,246,0.74)_45%,rgba(239,245,246,0.88)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(239,245,246,0.3)_0%,transparent_24%,transparent_72%,rgba(239,245,246,0.75)_100%)]" />
-        <div className="bg-cyber-grid absolute inset-0 opacity-[0.18]" />
-        <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(rgba(8,25,34,0.22)_0.6px,transparent_0.6px)] [background-size:5px_5px]" />
+        <div className="absolute inset-0 bg-[#F4FAFB]/35" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,250,251,0.85)_0%,rgba(244,250,251,0.5)_38%,transparent_75%)] max-lg:bg-[linear-gradient(180deg,rgba(244,250,251,0.8)_0%,transparent_100%)]" />
+        <div className="bg-cyber-grid absolute inset-0 opacity-[0.10]" />
       </div>
 
       <div className="content-rail hero-content relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-8 py-9 sm:gap-10 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-x-10 lg:py-10 xl:gap-x-16">

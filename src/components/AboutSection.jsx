@@ -254,38 +254,27 @@ const AboutSection = () => {
       id="about"
       ref={sectionRef}
       aria-labelledby="about-heading"
-      className="about-section section-dark relative isolate flex w-full flex-col overflow-hidden border-b border-white/10 bg-[#04090d] text-white"
+      className="about-section relative isolate flex w-full flex-col overflow-hidden border-b border-black/10 bg-transparent text-[#081922]"
     >
-      {/* Atmospheric background. The lead image below is deliberately not masked, tinted, or cropped. */}
+      {/* Subtle atmospheric glow and cyber grid revealing common Animus background */}
       <div
         aria-hidden="true"
-        className="abx-bg pointer-events-none absolute -inset-6 -z-30 bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(180deg, rgba(3,8,12,0.66) 0%, rgba(3,8,12,0.46) 46%, rgba(3,8,12,0.92) 100%), url("${ABOUT_BACKGROUND_IMAGE_SRC}")`,
-        }}
+        className="abx-glow pointer-events-none absolute right-[11%] top-[6%] -z-20 h-64 w-64 rounded-full bg-[var(--color-primary)]/10 blur-[105px] sm:h-80 sm:w-80 sm:blur-[120px]"
       />
       <div
         aria-hidden="true"
-        className="abx-glow pointer-events-none absolute right-[11%] top-[6%] -z-20 h-64 w-64 rounded-full bg-(--color-primary)/20 blur-[105px] sm:h-80 sm:w-80 sm:blur-[120px]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(2,6,9,0.74)_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.022)_0_1px,transparent_1px_3px)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-cyber-grid opacity-15"
       />
 
       {/* Section metadata */}
       <header className="relative z-20 w-full px-5 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 xl:pt-20">
         <div className="mx-auto flex w-full max-w-[90rem] items-start justify-between gap-5">
           <div className="min-w-0">
-            <p className="abx-reveal font-mono text-[9px] uppercase tracking-[0.16em] text-white/45 sm:text-[10px] sm:tracking-[0.2em]">
+            <p className="abx-reveal font-mono text-[9px] uppercase tracking-[0.16em] text-[#435b62] sm:text-[10px] sm:tracking-[0.2em]">
               The Animus training network
             </p>
           </div>
-          <p className="abx-reveal hidden shrink-0 text-right font-mono text-[9px] uppercase leading-[1.8] tracking-[0.16em] text-white/45 sm:block sm:text-[10px]">
+          <p className="abx-reveal hidden shrink-0 text-right font-mono text-[9px] uppercase leading-[1.8] tracking-[0.16em] text-[#435b62] sm:block sm:text-[10px]">
             IEEE Student Branch of SLTC
             <br />
             2026 / Online
@@ -300,7 +289,7 @@ const AboutSection = () => {
           {/* Left column: headline and supporting copy */}
           <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-3 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
             <div className="max-w-[24rem]">
-              <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-white/45 sm:text-[10px]">
+              <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-[#435b62] sm:text-[10px]">
                 Think beyond the obvious
               </p>
               <h2
@@ -313,7 +302,7 @@ const AboutSection = () => {
                   </span>
                 ))}
               </h2>
-              <p data-about-scramble className="abx-intro-text mt-5 max-w-sm font-body text-[13px] leading-6 text-white/70 sm:text-sm">
+              <p data-about-scramble className="abx-intro-text mt-5 max-w-sm font-body text-[13px] leading-6 text-[#4d646b] sm:text-sm">
                 DecodeXtreme is an online programming experience by the IEEE Student Branch of SLTC, helping student teams sharpen their algorithms, strategy, and confidence.
               </p>
               <button
@@ -327,7 +316,7 @@ const AboutSection = () => {
             </div>
 
             {/* Recruitment and supporting text sit low on the left on desktop. */}
-            <aside className="abx-callout abx-reveal mt-8 w-full max-w-[22rem] border-t border-white/20 pt-4 sm:mt-10 xl:mt-12">
+            <aside className="abx-callout abx-reveal mt-8 w-full max-w-[22rem] border-t border-[#087e87]/25 pt-4 sm:mt-10 xl:mt-12">
               <div className="mb-3 flex items-center gap-3">
                 <span className="relative block h-5 w-10 shrink-0 overflow-hidden border border-(--color-primary)/70">
                   <span className="abx-glitch-bar absolute left-0 top-1 h-1.5 w-1/2 bg-(--color-primary)" />
@@ -338,7 +327,7 @@ const AboutSection = () => {
               <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] sm:text-4xl">
                 Decoders <span className="text-(--color-primary)">wanted.</span>
               </p>
-              <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-white/55 sm:text-[10px]">
+              <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-[#556970] sm:text-[10px]">
                 <ShieldCheck size={15} className="mt-px shrink-0 text-(--color-primary)" aria-hidden="true" />
                 <span data-about-scramble>Open access · Sri Lanka · 100% online</span>
               </p>
@@ -362,7 +351,7 @@ const AboutSection = () => {
                 />
               </div>
             </div>
-            <span aria-hidden="true" className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/35 xl:flex">
+            <span aria-hidden="true" className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-[#556970]/60 xl:flex">
               <span className="h-px w-6 bg-(--color-primary)/70" />
               Character profile
               <span className="h-px w-6 bg-(--color-primary)/70" />
@@ -371,18 +360,18 @@ const AboutSection = () => {
 
           {/* Right column: leadership details, then the three protocols vertically. */}
           <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-4 xl:col-start-9 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
-            <section className="abx-lead-card abx-reveal relative border-l-2 border-(--color-primary) bg-[#04090d]/55 py-4 pl-5 pr-2 sm:py-5 sm:pl-6 sm:pr-4">
-              <div className="absolute -left-[2px] top-0 h-8 w-[2px] bg-white/70" aria-hidden="true" />
+            <section className="abx-lead-card abx-reveal relative border-l-2 border-(--color-primary) bg-white/70 backdrop-blur-md py-4 pl-5 pr-2 sm:py-5 sm:pl-6 sm:pr-4 shadow-[0_4px_24px_rgba(8,126,135,0.08)]">
+              <div className="absolute -left-[2px] top-0 h-8 w-[2px] bg-[var(--color-primary)]" aria-hidden="true" />
               <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary) sm:text-[10px]">
                 Project leadership // 01
               </p>
-              <h3 data-about-scramble className="mt-2 font-display text-2xl font-bold uppercase leading-[0.95] tracking-[-0.04em] text-white sm:text-3xl">
+              <h3 data-about-scramble className="mt-2 font-display text-2xl font-bold uppercase leading-[0.95] tracking-[-0.04em] text-[#081922] sm:text-3xl">
                 Project Chairperson
               </h3>
-              <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.11em] text-white/65 sm:text-[10px] sm:tracking-[0.13em]">
+              <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.11em] text-[#435b62] sm:text-[10px] sm:tracking-[0.13em]">
                 Lead Coordinator · DecodeXtreme 2026
               </p>
-              <p data-about-scramble className="mt-3 max-w-lg text-xs leading-[1.7] text-white/60 sm:text-[13px]">
+              <p data-about-scramble className="mt-3 max-w-lg text-xs leading-[1.7] text-[#4d646b] sm:text-[13px]">
                 Guiding the initiative from concept to competition and connecting the student community with the skills and confidence to enter the IEEEXtreme arena.
               </p>
             </section>
@@ -390,28 +379,28 @@ const AboutSection = () => {
             <section className="mt-8 sm:mt-10 xl:mt-9" aria-labelledby="about-protocols-heading">
               <div className="abx-reveal mb-4 flex items-center gap-3 sm:mb-5">
                 <span aria-hidden="true" className="h-px w-7 shrink-0 bg-(--color-primary)" />
-                <h3 id="about-protocols-heading" className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-white/65 sm:text-[10px] sm:tracking-[0.2em]">
+                <h3 id="about-protocols-heading" className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-[#435b62] sm:text-[10px] sm:tracking-[0.2em]">
                   3 training protocols
                 </h3>
               </div>
 
               <div className="space-y-5 sm:space-y-6">
                 {LEARNING_TRACKS.map((track) => (
-                  <article key={track.num} className="abx-track abx-reveal group relative min-w-0 border-t border-white/20 pt-4 transition-colors duration-300 hover:border-(--color-primary)/80 sm:pt-5">
+                  <article key={track.num} className="abx-track abx-reveal group relative min-w-0 border-t border-[#087e87]/20 pt-4 transition-colors duration-300 hover:border-(--color-primary)/60 sm:pt-5">
                     <span aria-hidden="true" className="absolute -top-[7px] left-0 text-(--color-primary)">
                       <X size={13} strokeWidth={2.5} />
                     </span>
                     <div className="mb-2 flex items-start justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.1em] text-(--color-primary) sm:tracking-[0.13em]">
                       <span>{track.badge}</span>
-                      <span className="shrink-0 text-white/40">{track.num}</span>
+                      <span className="shrink-0 text-[#556970]">{track.num}</span>
                     </div>
-                    <h4 className="font-display text-base font-bold uppercase leading-tight tracking-[-0.025em] text-white sm:text-lg">
+                    <h4 className="font-display text-base font-bold uppercase leading-tight tracking-[-0.025em] text-[#081922] sm:text-lg">
                       {track.title}
                     </h4>
-                    <p data-about-scramble className="mt-2 text-[11px] leading-[1.7] text-white/60 sm:text-xs sm:leading-[1.75]">
+                    <p data-about-scramble className="mt-2 text-[11px] leading-[1.7] text-[#4d646b] sm:text-xs sm:leading-[1.75]">
                       {track.desc}
                     </p>
-                    <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.1em] text-white/40 sm:tracking-[0.12em]">
+                    <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.1em] text-[#556970] sm:tracking-[0.12em]">
                       {track.tag}
                     </p>
                   </article>
