@@ -28,16 +28,16 @@ const updates = [
 
 const Newsletter = ({ onOpenRegister }) => {
   return (
-    <div className="relative min-h-screen w-full bg-transparent text-white pt-28">
+    <div className="relative min-h-screen w-full bg-transparent text-[var(--color-text)] pt-28">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="section-label mb-4">
           <span>BROADCAST // EVENT DISPATCHES</span>
         </div>
         <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight mb-6">
           <span className="section-heading-outline block">EVENT</span>
-          <span className="section-heading-italic block">Updates &amp; Bulletins</span>
+          <span className="font-display font-bold uppercase tracking-tight text-[var(--color-primary)] block">Updates &amp; Bulletins</span>
         </h1>
-        <p className="text-gray-400 text-base md:text-lg max-w-2xl font-body leading-relaxed mb-12">
+        <p className="text-[var(--color-text-muted)] text-base md:text-lg max-w-2xl font-body leading-relaxed mb-12">
           Latest official dispatches from the DecodeXtreme organizing team and IEEE Student Branch of SLTC.
         </p>
 
@@ -69,8 +69,9 @@ const Newsletter = ({ onOpenRegister }) => {
             <p className="text-xs text-gray-400 font-mono mt-1">Enroll individually or register your 3-member SLTC roster.</p>
           </div>
           <button
-            onClick={onOpenRegister}
-            className="px-8 py-3.5 bg-[var(--color-primary)] text-black rounded-full font-display font-bold text-xs uppercase tracking-wider hover:bg-[#1bc2c5] transition-all cursor-pointer whitespace-nowrap"
+            type="button"
+            onClick={() => onOpenRegister?.('individual')}
+            className="px-8 py-3.5 bg-[var(--color-primary)] text-white rounded-full font-display font-bold text-xs uppercase tracking-wider hover:bg-[var(--color-electric-aqua)] transition-all cursor-pointer whitespace-nowrap shadow-sm"
           >
             Register Now
           </button>

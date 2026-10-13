@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -45,9 +45,7 @@ const Home = ({ isLoading, onOpenRegister }) => (
 
     <TimelineFullscreenMap onOpenRegister={onOpenRegister} />
 
-    {/* <ServicesSection
-      onOpenRegister={() => onOpenRegister('individual')}
-    /> */}
+    <ServicesSection onOpenRegister={onOpenRegister} />
 
     <PrizesSection />
     <GuidelinesSection />
@@ -70,13 +68,27 @@ const App = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [regType, setRegType] = useState('individual');
 
-  // Enforce light theme globally. No theme toggle is provided.
+  // Enforce Clean SaaS light theme globally.
   useLayoutEffect(() => {
     const root = document.documentElement;
-
     root.setAttribute('data-theme', 'light');
     root.style.colorScheme = 'light';
   }, []);
+
+  const location = useLocation();
+
+  // Scroll to hash target if navigating from another route or on hash change.
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        requestAnimationFrame(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    }
+  }, [location]);
 
   // Refresh ScrollTrigger measurements after the preloader disappears.
   useLayoutEffect(() => {
@@ -180,7 +192,8 @@ const App = () => {
   }, [audioNeedsGesture]);
 
   const openRegister = (type = 'individual') => {
-    setRegType(type);
+    const valid = (typeof type === 'string' && (type === 'individual' || type === 'team')) ? type : 'individual';
+    setRegType(valid);
     setIsRegisterOpen(true);
   };
 

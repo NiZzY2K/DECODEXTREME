@@ -41,36 +41,36 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
 
-    /* Primary palette */
-    --color-primary: #08d1d8;
-    --color-primary-rgb: 8, 209, 216;
+    /* Primary palette - Clean SaaS Teal */
+    --color-primary: #087e87;
+    --color-primary-rgb: 8, 126, 135;
 
-    --color-electric-aqua: #3eebf0;
-    --color-electric-aqua-rgb: 62, 235, 240;
+    --color-electric-aqua: #08aeb5;
+    --color-electric-aqua-rgb: 8, 174, 181;
 
-    --color-secondary: #087e87;
-    --color-secondary-rgb: 8, 126, 135;
+    --color-secondary: #075e66;
+    --color-secondary-rgb: 7, 94, 102;
 
     /* Backgrounds */
-    --color-bg: #05090d;
-    --color-bg-elevated: #081922;
-    --color-surface: rgba(11, 42, 48, 0.55);
-    --color-surface-solid: #0b2a30;
-    --color-surface-hover: rgba(8, 126, 135, 0.16);
+    --color-bg: #f4fafb;
+    --color-bg-elevated: #e8f2f4;
+    --color-surface: rgba(255, 255, 255, 0.90);
+    --color-surface-solid: #ffffff;
+    --color-surface-hover: rgba(8, 126, 135, 0.08);
 
     /* Borders and text */
-    --color-border: rgba(8, 209, 216, 0.15);
-    --color-border-strong: rgba(8, 209, 216, 0.38);
+    --color-border: rgba(8, 63, 70, 0.13);
+    --color-border-strong: rgba(8, 126, 135, 0.4);
 
-    --color-text: #f4fafb;
-    --color-text-muted: #a9bdc2;
-    --color-text-dim: rgba(169, 189, 194, 0.60);
+    --color-text: #081922;
+    --color-text-muted: #435b62;
+    --color-text-dim: rgba(67, 91, 98, 0.7);
 
     /* Effects */
-    --glow-primary: 0 0 24px rgba(8, 209, 216, 0.16);
-    --glow-strong: 0 0 32px rgba(8, 209, 216, 0.28);
+    --glow-primary: 0 0 20px rgba(8, 126, 135, 0.09);
+    --glow-strong: 0 0 28px rgba(8, 126, 135, 0.15);
 
     /* Typography */
     --font-display: "Space Grotesk", sans-serif;
@@ -187,7 +187,7 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 6rem;
+    scroll-padding-top: 5rem;
   }
 
   body {
@@ -324,79 +324,13 @@
   }
 
   .section-dark {
-    --color-primary: #087e87;
-    --color-primary-rgb: 8, 126, 135;
-    --color-electric-aqua: #08aeb5;
-    --color-secondary: #075e66;
-    --color-border: rgba(8, 63, 70, 0.16);
-    --color-border-strong: rgba(8, 126, 135, 0.42);
-    background:
-      radial-gradient(circle at 75% 18%, rgba(var(--color-primary-rgb), 0.1), transparent 28rem),
-      linear-gradient(180deg, #e8eff0 0%, #dce8e9 100%);
+    background: var(--color-bg);
+    color: var(--color-text);
   }
 
-  .section-dark .section-heading-outline,
-  .section-dark .prog-heading,
-  .section-dark .prog-heading-word,
-  .section-dark .about-headline,
-  .section-dark .about-track-body h3 {
-    color: #10252c !important;
-  }
 
-  .section-dark .section-heading-outline {
-    -webkit-text-stroke-color: rgba(77, 100, 107, 0.62);
-  }
 
-  .section-dark .section-subtext,
-  .section-dark .prog-header-note,
-  .section-dark .about-intro-fade,
-  .section-dark .about-track-body p,
-  .section-dark .prog-footnote {
-    color: #4d646b !important;
-  }
 
-  .services-section .prog-panel {
-    min-height: 34rem;
-    border: 1px solid rgba(8, 63, 70, 0.16);
-    background-color: #d5e3e5 !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  }
-
-  .services-section .prog-panel:hover {
-    background-color: #cbdde0 !important;
-    border-color: color-mix(in srgb, var(--panel-accent) 70%, transparent);
-  }
-
-  .services-section .prog-panel > div[aria-hidden="true"]:nth-of-type(2) {
-    background: linear-gradient(180deg, rgba(232, 239, 240, 0.08) 5%, rgba(207, 222, 224, 0.96) 92%) !important;
-  }
-
-  .services-section .prog-panel > div[aria-hidden="true"]:nth-of-type(3) {
-    border-color: rgba(8, 63, 70, 0.2) !important;
-  }
-
-  .services-section .prog-panel h3 {
-    color: #10252c !important;
-  }
-
-  .services-section .prog-panel p,
-  .services-section .prog-panel span {
-    color: #4d646b !important;
-  }
-
-  .services-section .prog-panel h3:hover,
-  .services-section .prog-panel:hover h3 {
-    color: var(--panel-accent) !important;
-  }
-
-  .services-section .prog-panel button span {
-    color: #052126 !important;
-  }
-
-  .services-section .prog-footnote {
-    border: 1px solid rgba(8, 209, 216, 0.16);
-    background: rgba(213, 227, 229, 0.7);
-  }
 
   .hero-kicker {
     text-shadow: 0 0 18px rgba(var(--color-primary-rgb), 0.45);
@@ -541,13 +475,14 @@
 
   .section-heading-italic {
     color: var(--color-primary);
-    text-shadow: 0 0 26px rgba(var(--color-primary-rgb), 0.16);
+    text-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.16);
 
-    font-family: var(--font-serif);
-    font-size: clamp(2.6rem, 5.8vw, 4.8rem);
-    font-style: italic;
-    font-weight: 400;
-    letter-spacing: -0.025em;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5.2vw, 4.5rem);
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
   }
 
   .section-subtext {

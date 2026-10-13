@@ -2,99 +2,100 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import battlefieldBg from '../assets/animus-battlefield-bg.jpg';
-import eagleVisionBg from '../assets/animus-eaglevision-bg.jpg';
-
 gsap.registerPlugin(ScrollTrigger);
 
 const AnimusGlobalBackground = () => {
-  const battlefieldRef = useRef(null);
-  const eagleVisionRef = useRef(null);
+  const canvasRef = useRef(null);
   const crestRef = useRef(null);
+  const animRef = useRef(null);
+
+  // Lightweight particle canvas — no images, no layout shift
   useEffect(() => {
-    const context = gsap.context(() => {
-      gsap.to(battlefieldRef.current, {
-        yPercent: 14,
-        scale: 1.08,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: 'top top',
-          end: '45% top',
-          scrub: true,
-        },
-      });
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
 
-      gsap.fromTo(
-        battlefieldRef.current,
-        { opacity: 0.34 },
-        {
-          opacity: 0.72,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: document.documentElement,
-            start: 'top top',
-            end: '20% top',
-            scrub: true,
-          },
-        },
-      );
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return undefined;
 
-      gsap.to(battlefieldRef.current, {
-        opacity: 0.08,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: '28% top',
-          end: '56% top',
-          scrub: true,
-        },
-      });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      gsap.fromTo(
-        eagleVisionRef.current,
-        { opacity: 0, scale: 1.08, yPercent: -8 },
-        {
-          opacity: 0.52,
-          scale: 1,
-          yPercent: 10,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: document.documentElement,
-            start: '28% top',
-            end: '62% top',
-            scrub: true,
-          },
-        },
-      );
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    let rafId;
 
-      gsap.to(eagleVisionRef.current, {
-        opacity: 0.16,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: '68% top',
-          end: '92% top',
-          scrub: true,
-        },
-      });
+    const PARTICLE_COUNT = reduceMotion ? 0 : 60;
 
-      gsap.to(crestRef.current, {
-        rotation: 210,
-        scale: 0.82,
-        xPercent: 15,
-        yPercent: 120,
+    const resize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      spawnParticles();
+    };
+
+    const spawnParticles = () => {
+      particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.12,
+        size: Math.random() * 1.4 + 0.4,
+        alpha: Math.random() * 0.35 + 0.08,
+      }));
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(8, 209, 216, ${p.alpha})`;
+        ctx.fill();
+      }
+
+      rafId = requestAnimationFrame(draw);
+    };
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    animRef.current = rafId;
+    draw();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  // Parallax crest on scroll
+  useEffect(() => {
+    const crest = crestRef.current;
+    if (!crest) return undefined;
+
+    const ctx = gsap.context(() => {
+      gsap.to(crest, {
+        rotation: 200,
+        scale: 0.85,
+        yPercent: 80,
         ease: 'none',
         scrollTrigger: {
           trigger: document.documentElement,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1.2,
+          scrub: 1.5,
         },
       });
     });
 
-    return () => context.revert();
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -102,38 +103,31 @@ const AnimusGlobalBackground = () => {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden"
     >
-      <div
-        ref={battlefieldRef}
-        className="absolute inset-0 overflow-hidden opacity-35"
-      >
-        <img
-          src={battlefieldBg}
-          alt=""
-          className="h-full w-full scale-200 object-cover contrast-125 brightness-75 saturate-125"
-        />
-      </div>
+      {/* CSS cyber grid overlay */}
+      <div className="absolute inset-0 bg-cyber-grid opacity-[0.07]" />
 
-      <div
-        ref={eagleVisionRef}
-        className="absolute inset-0 overflow-hidden opacity-0"
-      >
-        <img
-          src={eagleVisionBg}
-          alt=""
-          className="h-full w-full scale-105 object-cover contrast-125 brightness-75 saturate-110"
-        />
-      </div>
+      {/* Radial gradient ambient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(8,209,216,0.06),transparent)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-[radial-gradient(ellipse_60%_40%_at_50%_100%,rgba(8,126,135,0.05),transparent)]" />
 
-      <div className="absolute inset-0 bg-cyber-grid opacity-10" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(0,242,254,0.025),transparent)] bg-[length:100%_8px] opacity-25" />
+      {/* Particle canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full opacity-70"
+        style={{ mixBlendMode: 'screen' }}
+      />
 
+      {/* Scan line sweep */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(8,209,216,0.015),transparent)] bg-[length:100%_6px] opacity-30" />
+
+      {/* Floating crest watermark */}
       <div
         ref={crestRef}
-        className="absolute left-1/2 top-1/4 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 text-[var(--color-primary)] opacity-15 sm:h-[520px] sm:w-[520px] md:h-[720px] md:w-[720px]"
+        className="absolute left-1/2 top-1/4 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 text-[var(--color-primary)] opacity-[0.06] sm:h-[520px] sm:w-[520px] md:h-[700px] md:w-[700px]"
       >
         <svg
           viewBox="0 0 200 240"
-          className="h-full w-full fill-none stroke-current stroke-[0.8] drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.45)]"
+          className="h-full w-full fill-none stroke-current stroke-[0.6] drop-shadow-[0_0_30px_rgba(8,209,216,0.3)]"
         >
           <path d="M100,10 L165,135 L135,145 L100,75 L65,145 L35,135 Z" />
           <path d="M100,55 L135,130 L115,138 L100,105 L85,138 L65,130 Z" strokeDasharray="4,2" />
@@ -145,7 +139,6 @@ const AnimusGlobalBackground = () => {
           <line x1="100" y1="5" x2="100" y2="235" />
         </svg>
       </div>
-
     </div>
   );
 };

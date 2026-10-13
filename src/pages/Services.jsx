@@ -5,7 +5,7 @@ import TimelineFullscreenMap from '../components/TimelineFullscreenMap';
 
 const Services = ({ onOpenRegister }) => {
   return (
-    <div className="relative min-h-screen w-full bg-transparent text-white pt-24">
+    <div className="relative min-h-screen w-full bg-transparent text-[var(--color-text)] pt-24">
       <ServicesSection onOpenRegister={onOpenRegister} />
       <TimelineFullscreenMap onOpenRegister={onOpenRegister} />
       <Footer onOpenRegister={onOpenRegister} />

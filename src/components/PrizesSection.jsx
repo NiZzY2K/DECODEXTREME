@@ -5,6 +5,34 @@ import { Trophy, Award, Medal, Sparkles } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const scrambleRuns = new WeakMap();
+
+const scrambleText = (element, duration = 0.6) => {
+  if (!element) return;
+  const finalText = element.dataset.originalText || element.textContent;
+  element.dataset.originalText = finalText;
+  scrambleRuns.get(element)?.kill();
+  const characters = [...finalText];
+  const state = { progress: 0 };
+  let frame = 0;
+  const tween = gsap.to(state, {
+    progress: 1, duration, ease: 'power2.out',
+    onUpdate: () => {
+      const cursor = Math.min(characters.length, Math.floor(state.progress * (characters.length + 2)));
+      frame += 1;
+      element.textContent = characters.map((c, i) => {
+        if (!/[A-Za-z0-9]/.test(c)) return c;
+        if (i < cursor || state.progress === 1) return c;
+        if (i < cursor + 2) return SCRAMBLE_CHARS[(i * 7 + frame) % SCRAMBLE_CHARS.length];
+        return c;
+      }).join('');
+    },
+    onComplete: () => { element.textContent = finalText; },
+  });
+  scrambleRuns.set(element, tween);
+};
+
 const PrizesSection = () => {
   const sectionRef = useRef(null);
 
@@ -33,6 +61,15 @@ const PrizesSection = () => {
           start: 'top 80%',
         },
       });
+
+      // Scramble the badge texts on scroll
+      document.querySelectorAll('[data-prize-scramble]').forEach((el, i) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 85%',
+          onEnter: () => scrambleText(el, 0.5 + i * 0.06),
+        });
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -46,7 +83,7 @@ const PrizesSection = () => {
       status: 'Official Details Pending',
       icon: Medal,
       accent: '#94a3b8',
-      glowColor: 'rgba(148, 163, 184, 0.15)',
+      glowColor: 'rgba(148, 163, 184, 0.12)',
       order: 'order-2 md:order-1',
       height: 'h-auto md:h-[340px]',
     },
@@ -57,7 +94,7 @@ const PrizesSection = () => {
       status: 'Official Details Pending',
       icon: Trophy,
       accent: 'var(--color-primary)',
-      glowColor: 'rgba(8, 126, 135, 0.12)',
+      glowColor: 'rgba(8, 209, 216, 0.10)',
       order: 'order-1 md:order-2',
       height: 'h-auto md:h-[380px]',
       featured: true,
@@ -69,7 +106,7 @@ const PrizesSection = () => {
       status: 'Official Details Pending',
       icon: Award,
       accent: '#d97706',
-      glowColor: 'rgba(217, 119, 6, 0.12)',
+      glowColor: 'rgba(217, 119, 6, 0.10)',
       order: 'order-3 md:order-3',
       height: 'h-auto md:h-[320px]',
     },
@@ -79,9 +116,15 @@ const PrizesSection = () => {
     <section
       id="prizes"
       ref={sectionRef}
-      className="section-dark relative w-full overflow-hidden border-b border-[var(--color-border)] py-28"
+      className="relative w-full overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] py-24 sm:py-28"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(var(--color-primary-rgb),0.12),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.2),transparent)]" />
+      {/* Background ambience */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-1/4 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary)]/6 blur-[120px]" />
+        <div className="absolute right-[10%] bottom-[20%] h-48 w-48 rounded-full bg-[var(--color-secondary)]/8 blur-[80px]" />
+      </div>
+      <div className="bg-cyber-grid pointer-events-none absolute inset-0 opacity-[0.04]" />
+
       <div className="content-rail relative z-10">
         <div className="section-header">
           <div className="section-label prize-header-anim">
@@ -90,7 +133,9 @@ const PrizesSection = () => {
 
           <div className="section-heading-wrap prize-header-anim">
             <span className="section-heading-outline">Recognition</span>
-            <span className="section-heading-italic">Prizes &amp; Awards</span>
+            <span className="font-display font-bold uppercase tracking-tight text-[var(--color-primary)] text-[clamp(2.4rem,5.5vw,4.5rem)] leading-none">
+              Prizes &amp; Awards
+            </span>
           </div>
 
           <p className="section-subtext prize-header-anim">
@@ -106,12 +151,17 @@ const PrizesSection = () => {
                 key={podium.place}
                 className={`prize-podium-card ${podium.order} ${podium.height} animus-card group relative flex flex-col justify-between p-8 text-center hud-bracket ${
                   podium.featured
-                    ? 'border-[var(--color-primary)]/60 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.12)] via-[rgba(255,255,255,0.75)] to-transparent shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.12)]'
-                    : 'border-[var(--color-border)] bg-[rgba(255,255,255,0.38)]'
+                    ? 'border-[var(--color-primary)]/50 shadow-[0_12px_36px_rgba(8,126,135,0.12)]'
+                    : 'border-[var(--color-border)]'
                 }`}
+                style={{
+                  background: podium.featured
+                    ? `linear-gradient(135deg, rgba(8,126,135,0.08) 0%, var(--color-surface) 60%)`
+                    : 'var(--color-surface)',
+                }}
               >
                 {podium.featured && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[var(--color-primary)] px-4 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#06292c] shadow-md">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[var(--color-primary)] px-4 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white shadow-md">
                     Championship laurels
                   </div>
                 )}
@@ -128,7 +178,7 @@ const PrizesSection = () => {
                     <Icon size={32} />
                   </div>
 
-                  <span className="mb-2 block font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--color-text-muted)]">
+                  <span data-prize-scramble className="mb-2 block font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--color-text-muted)]">
                     {podium.place}
                   </span>
 
@@ -145,7 +195,7 @@ const PrizesSection = () => {
                   <div className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)]">
                     {podium.status}
                   </div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--color-text-dim)]">
                     PreXtreme 2026 Finale
                   </div>
                 </div>
@@ -154,7 +204,8 @@ const PrizesSection = () => {
           })}
         </div>
 
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 rounded-[1.25rem] border border-[var(--color-border)] bg-[rgba(255,255,255,0.4)] p-6 text-center sm:flex-row sm:text-left">
+        {/* Certificate notice */}
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center sm:flex-row sm:text-left backdrop-blur-sm">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)]">
             <Sparkles size={22} />
           </div>

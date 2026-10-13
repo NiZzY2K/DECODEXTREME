@@ -9,6 +9,34 @@ import contact3 from '../assets/contact_3.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const scrambleRuns = new WeakMap();
+
+const scrambleText = (element, duration = 0.6) => {
+  if (!element) return;
+  const finalText = element.dataset.originalText || element.textContent;
+  element.dataset.originalText = finalText;
+  scrambleRuns.get(element)?.kill();
+  const characters = [...finalText];
+  const state = { progress: 0 };
+  let frame = 0;
+  const tween = gsap.to(state, {
+    progress: 1, duration, ease: 'power2.out',
+    onUpdate: () => {
+      const cursor = Math.min(characters.length, Math.floor(state.progress * (characters.length + 2)));
+      frame += 1;
+      element.textContent = characters.map((c, i) => {
+        if (!/[A-Za-z0-9]/.test(c)) return c;
+        if (i < cursor || state.progress === 1) return c;
+        if (i < cursor + 2) return SCRAMBLE_CHARS[(i * 7 + frame) % SCRAMBLE_CHARS.length];
+        return c;
+      }).join('');
+    },
+    onComplete: () => { element.textContent = finalText; },
+  });
+  scrambleRuns.set(element, tween);
+};
+
 const ContactSection = () => {
   const sectionRef = useRef(null);
 
@@ -36,6 +64,15 @@ const ContactSection = () => {
           trigger: '.crew-cards-grid',
           start: 'top 80%',
         },
+      });
+
+      // Scramble operative IDs on scroll
+      document.querySelectorAll('[data-contact-scramble]').forEach((el, i) => {
+        ScrollTrigger.create({
+          trigger: el.closest('.crew-card-anim') || el,
+          start: 'top 85%',
+          onEnter: () => scrambleText(el, 0.5 + i * 0.05),
+        });
       });
     }, sectionRef);
 
@@ -89,9 +126,15 @@ const ContactSection = () => {
     <section
       id="operatives"
       ref={sectionRef}
-      className="section-dark relative w-full overflow-hidden border-b border-[var(--color-border)] py-28"
+      className="relative w-full overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] py-24 sm:py-28"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(var(--color-primary-rgb),0.09),transparent_16rem),radial-gradient(circle_at_75%_10%,rgba(var(--color-primary-rgb),0.08),transparent_18rem)]" />
+      {/* Background ambience */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[10%] top-[8%] h-64 w-64 rounded-full bg-[var(--color-primary)]/7 blur-[120px]" />
+        <div className="absolute right-[8%] top-[12%] h-48 w-48 rounded-full bg-[var(--color-secondary)]/8 blur-[90px]" />
+        <div className="absolute left-[40%] bottom-[10%] h-56 w-56 rounded-full bg-[var(--color-primary)]/5 blur-[100px]" />
+      </div>
+      <div className="bg-cyber-grid pointer-events-none absolute inset-0 opacity-[0.04]" />
 
       <div className="content-rail relative z-10">
         <div className="section-header">
@@ -109,7 +152,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="crew-cards-grid mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="crew-cards-grid mb-16 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {operatives.map((op) => (
             <div
               key={op.id}
@@ -117,12 +160,12 @@ const ContactSection = () => {
             >
               <div>
                 <div className="mb-5 flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-primary)]">
+                  <span data-contact-scramble className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-primary)]">
                     {op.id}
                   </span>
-                  <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-emerald-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>{op.status}</span>
+                  <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="hidden sm:inline">{op.status.split(' // ')[0]}</span>
                   </div>
                 </div>
 
@@ -136,7 +179,7 @@ const ContactSection = () => {
                 </div>
 
                 <div className="mb-4 text-center">
-                  <h4 className="font-display text-lg font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)]">
+                  <h4 className="font-display text-base font-bold text-[var(--color-text)] transition-colors group-hover:text-[var(--color-primary)] sm:text-lg">
                     {op.name}
                   </h4>
                   <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--color-primary)]">
@@ -173,7 +216,8 @@ const ContactSection = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 rounded-[1.25rem] border border-[var(--color-border)] bg-[rgba(255,255,255,0.38)] p-8 md:grid-cols-3">
+        {/* Contact info grid */}
+        <div className="grid grid-cols-1 gap-6 rounded-[1.25rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 backdrop-blur-sm sm:p-8 md:grid-cols-3">
           <div className="flex items-start gap-4">
             <div className="shrink-0 rounded-xl bg-[rgba(var(--color-primary-rgb),0.08)] p-3 text-[var(--color-primary)]">
               <MessageCircle size={22} />
@@ -213,7 +257,7 @@ const ContactSection = () => {
               <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
                 SLTC Research University, Ingiriya Road, Padukka, Sri Lanka. Fully online competition execution.
               </p>
-              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-text-dim)]">
                 Coordinates: 06.8528° N, 80.1039° E
               </div>
             </div>

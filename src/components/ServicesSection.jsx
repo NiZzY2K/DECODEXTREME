@@ -455,14 +455,14 @@ const ServicesSection = ({ onOpenRegister }) => {
                   <div className="prog-panel-item">
                     <button
                       type="button"
-                      onClick={onOpenRegister}
+                      onClick={() => onOpenRegister?.(item.isChallenge ? 'team' : 'individual')}
                       className={`nav-angular-button group/cta inline-flex min-h-10 w-full items-center justify-between gap-3 border px-3 py-2.5 font-display text-[9px] font-bold uppercase tracking-[0.09em] transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#007b83] ${
                         item.isChallenge
-                          ? 'border-rose-500 bg-[#ff4568] text-[#210812] hover:border-rose-600 hover:bg-[#ff7189]'
-                          : 'border-cyan-700/30 bg-[var(--color-primary)] text-[#052126] hover:border-cyan-700/60 hover:bg-[var(--color-electric-aqua)]'
+                          ? 'border-rose-500 bg-[#ff4568] text-white hover:border-rose-600 hover:bg-[#ff7189]'
+                          : 'border-cyan-700/30 bg-[var(--color-primary)] text-white hover:border-cyan-700/60 hover:bg-[var(--color-electric-aqua)]'
                       }`}
                     >
-                      <span>{item.isChallenge ? 'Register team' : 'View session'}</span>
+                      <span>{item.isChallenge ? 'Register team' : 'Register session'}</span>
                       <MoveRight size={14} className="transition-transform duration-200 group-hover/cta:translate-x-1" aria-hidden="true" />
                     </button>
                   </div>
