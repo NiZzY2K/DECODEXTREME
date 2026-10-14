@@ -15,7 +15,6 @@ import Footer from './components/Footer';
 import Preloader from './components/Preloader';
 import RegistrationModal from './components/RegistrationModal';
 import AnimusGlobalBackground from './components/AnimusGlobalBackground';
-import BackgroundShapes from './components/BackgroundShapes';
 
 import Portfolio from './pages/Portfolio';
 import Services from './pages/Services';
@@ -268,7 +267,6 @@ const App = () => {
       )}
 
       <AnimusGlobalBackground />
-      <BackgroundShapes />
 
       {/* Navigation: light theme, no theme toggle */}
       <Navbar

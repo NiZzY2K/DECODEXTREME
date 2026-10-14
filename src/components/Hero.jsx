@@ -190,15 +190,6 @@ const Hero = ({ loading, onOpenRegister }) => {
         );
       }
 
-      const orbit = root.querySelector('.hero-orbit');
-      if (orbit) {
-        gsap.to(orbit, {
-          rotate: 360,
-          duration: 30,
-          ease: 'none',
-          repeat: -1,
-        });
-      }
     }, root);
 
     return () => {
