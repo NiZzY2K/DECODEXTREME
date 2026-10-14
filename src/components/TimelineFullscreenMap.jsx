@@ -124,6 +124,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
   const mapCanvasRef = useRef(null);
   const dossierRef = useRef(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
 
   const [active, setActive] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -178,12 +179,13 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
   useEffect(() => {
     const cur = timelineData[active];
     if (mapCanvasRef.current) {
-      const scale = isZoomed ? 1.3 : 1;
+      const mobileScale = isZoomed ? 1.4 : 1.12;
+      const scale = isMobile ? mobileScale : (isZoomed ? 1.3 : 1);
       gsap.to(mapCanvasRef.current, {
         xPercent: -50 + (50 - cur.x) * scale,
         yPercent: -50 + (50 - cur.y) * scale,
         x: isMobile ? 0 : '-15vw',
-        y: isMobile ? '-8dvh' : 0,
+        y: isMobile ? '-12dvh' : 0,
         scale,
         duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.85,
         ease: 'power3.out',
@@ -213,13 +215,13 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
 
   // Jump to specific checkpoint
   const goToStop = (index) => {
+    setActive(index);
     const trigger = triggerRef.current;
-    if (trigger) {
+    if (trigger && !isMobile) {
       const targetScroll =
         trigger.start + (trigger.end - trigger.start) * ((index + 0.1) / 4);
       window.scrollTo({ top: targetScroll, behavior: 'smooth' });
     }
-    setActive(index);
   };
 
   const handlePrev = () => {
@@ -230,21 +232,32 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
     goToStop((active + 1) % timelineData.length);
   };
 
-  // Swipe Gestures for Mobile
+  // Swipe Gestures for Mobile (rejects vertical page scroll)
   const handleTouchStart = (e) => {
+    if (e.target.closest('button') || e.target.closest('.hud-dossier-card-white')) {
+      return;
+    }
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   };
 
   const handleTouchEnd = (e) => {
+    if (!touchStartX.current && !touchStartY.current) return;
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
-    if (Math.abs(diff) > 45) {
-      if (diff > 0) {
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX.current - touchEndX;
+    const diffY = touchStartY.current - touchEndY;
+
+    // Trigger only if horizontal swipe dominates over vertical scrolling
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.6) {
+      if (diffX > 0) {
         handleNext(); // Swipe left -> next
       } else {
         handlePrev(); // Swipe right -> prev
       }
     }
+    touchStartX.current = 0;
+    touchStartY.current = 0;
   };
 
   const currentEvent = timelineData[active];
@@ -390,7 +403,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       <div className="absolute inset-0 pointer-events-none white-map-vignette z-10" />
 
       {/* 3. Top Tactical HUD Header */}
-      <div className="absolute top-0 left-0 right-0 z-30 pt-4 md:pt-6 px-4 md:px-12 pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 z-30 pt-16 sm:pt-20 md:pt-6 px-4 md:px-12 pointer-events-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 pointer-events-auto">
           {/* Section Heading with High Contrast on White Background */}
           <div>
@@ -554,29 +567,29 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       </div>
 
       {/* 4B. Mobile Responsive Bottom Sheet / Drawer (Mobile Only) */}
-      <div className="block md:hidden absolute bottom-3 left-3 right-3 z-30">
-        <div className="hud-dossier-card-white corner-bracket-cyan rounded-2xl p-4 shadow-2xl border">
+      <div className="block md:hidden absolute bottom-3 left-3 right-3 z-30 pointer-events-auto [bottom:max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="hud-dossier-card-white corner-bracket-cyan rounded-2xl p-3.5 sm:p-4 shadow-2xl border max-h-[70vh] flex flex-col justify-between">
           {/* Drag Pill / Toggle Header */}
-          <div
-            onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-            className="flex flex-col items-center cursor-pointer mb-2"
+          <button
+            type="button"
+            onClick={() => setIsMobileExpanded((prev) => !prev)}
+            className="w-full flex flex-col items-center cursor-pointer mb-2 text-left group"
+            aria-expanded={isMobileExpanded}
+            aria-label="Toggle checkpoint details"
           >
-            <div className="w-8 h-1 bg-white/30 rounded-full mb-1.5" />
+            <div className="w-8 h-1 bg-white/30 rounded-full mb-1.5 transition-colors group-hover:bg-white/60" />
             <div className="w-full flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#00f2fe] animate-pulse" />
-                <span className="font-mono text-[11px] font-bold text-[#00f2fe] uppercase">
+                <span className="font-mono text-[11px] font-bold text-[#00f2fe] uppercase tracking-wide">
                   CP {currentEvent.checkpoint} / 04: {currentEvent.session}
                 </span>
               </div>
-              <button
-                aria-label="Toggle details"
-                className="text-gray-400 hover:text-white p-1"
-              >
+              <span className="text-gray-400 group-hover:text-white p-1 transition-colors">
                 {isMobileExpanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-              </button>
+              </span>
             </div>
-          </div>
+          </button>
 
           {/* Compact View */}
           <div className="flex items-baseline justify-between gap-2 mb-2">
@@ -590,17 +603,17 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
 
           {/* Expandable Details Area */}
           {isMobileExpanded && (
-            <div className="space-y-2 mb-3 pt-2 border-t border-white/10 font-mono text-[11px] animate-fadeIn">
+            <div className="space-y-2 mb-2.5 pt-2 border-t border-white/10 font-mono text-[11px] animate-fadeIn max-h-[30vh] overflow-y-auto pr-1">
               <p className="text-gray-300 font-body text-xs leading-relaxed">
                 {currentEvent.description}
               </p>
               <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
                 <div className="bg-white/5 p-1.5 rounded">
-                  <span className="text-gray-400 block">TIME (SLT)</span>
+                  <span className="text-gray-400 block text-[9px]">TIME (SLT)</span>
                   <span className="text-white font-bold">{currentEvent.time}</span>
                 </div>
                 <div className="bg-white/5 p-1.5 rounded">
-                  <span className="text-gray-400 block">PLATFORM</span>
+                  <span className="text-gray-400 block text-[9px]">PLATFORM</span>
                   <span className="text-[#00f2fe] truncate block">{currentEvent.platform}</span>
                 </div>
               </div>
@@ -611,7 +624,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={() => onOpenRegister && onOpenRegister('individual')}
-              className="flex-grow py-2 px-3 bg-[#00f2fe] active:bg-[#1bc2c5] text-black font-display font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+              className="flex-grow py-2 px-3 bg-[#00f2fe] active:bg-[#1bc2c5] text-black font-display font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
               Register <ArrowUpRight size={13} />
             </button>
@@ -619,14 +632,14 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
             <button
               onClick={handlePrev}
               aria-label="Previous Checkpoint"
-              className="p-2 rounded-xl border border-white/20 bg-black/50 text-white"
+              className="p-2 rounded-xl border border-white/20 bg-black/50 active:bg-white/20 text-white cursor-pointer transition-colors"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={handleNext}
               aria-label="Next Checkpoint"
-              className="p-2 rounded-xl border border-white/20 bg-black/50 text-white"
+              className="p-2 rounded-xl border border-white/20 bg-black/50 active:bg-white/20 text-white cursor-pointer transition-colors"
             >
               <ChevronRight size={16} />
             </button>
@@ -638,7 +651,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
               <button
                 key={item.checkpoint}
                 onClick={() => goToStop(idx)}
-                className={`py-1 rounded font-mono text-[10px] font-bold transition-all text-center ${
+                className={`py-1 rounded font-mono text-[10px] font-bold transition-all text-center cursor-pointer ${
                   idx === active
                     ? 'bg-[#00f2fe] text-black shadow-sm'
                     : idx < active
