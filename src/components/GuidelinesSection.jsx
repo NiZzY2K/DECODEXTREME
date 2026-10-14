@@ -81,12 +81,12 @@ const GuidelinesSection = () => {
     <section
       id="guide"
       ref={sectionRef}
-      className="relative w-full py-28 px-6 md:px-12 bg-transparent text-white overflow-hidden border-b border-white/10"
+      className="section-dark relative w-full py-28 bg-transparent text-white overflow-hidden border-b border-white/10"
     >
       <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-25" />
       <div className="absolute top-1/3 right-10 w-80 h-80 bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="content-rail relative z-10">
         
         {/* CodeSprint Signature Section Header */}
         <div className="section-header">

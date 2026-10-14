@@ -8,7 +8,7 @@ const Footer = ({ onOpenRegister }) => (
   <footer className="relative bg-black/60 backdrop-blur-md text-white pt-20 pb-12 overflow-hidden border-t border-white/10">
     <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-20" />
     
-    <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+    <div className="content-rail relative z-10">
       
       {/* Top Footer Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">

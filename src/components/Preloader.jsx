@@ -1,6 +1,29 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
+const PHASE_LABELS = [
+  {
+    phase: '01 / DNA SIGNAL ACQUISITION',
+    detail: 'Searching encoded memory fragments...',
+    tag: 'ACQUIRING SIGNAL'
+  },
+  {
+    phase: '02 / STRAND ALIGNMENT',
+    detail: 'Rebuilding sequence structure...',
+    tag: 'MAPPING STRANDS'
+  },
+  {
+    phase: '03 / CIPHER DECRYPTION',
+    detail: 'Resolving encrypted memory sectors...',
+    tag: 'DECODING ARCHIVE'
+  },
+  {
+    phase: '04 / FULL SYNCHRONIZATION',
+    detail: 'Memory reconstruction complete.',
+    tag: 'SYNCHRONIZING'
+  }
+];
+
 const Preloader = ({ onComplete }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -9,29 +32,6 @@ const Preloader = ({ onComplete }) => {
 
   const [count, setCount] = useState(0);
   const [phaseIdx, setPhaseIdx] = useState(0);
-
-  const phaseLabels = [
-    {
-      phase: '01 / DNA SIGNAL ACQUISITION',
-      detail: 'Searching encoded memory fragments...',
-      tag: 'ACQUIRING SIGNAL'
-    },
-    {
-      phase: '02 / STRAND ALIGNMENT',
-      detail: 'Rebuilding sequence structure...',
-      tag: 'MAPPING STRANDS'
-    },
-    {
-      phase: '03 / CIPHER DECRYPTION',
-      detail: 'Resolving encrypted memory sectors...',
-      tag: 'DECODING ARCHIVE'
-    },
-    {
-      phase: '04 / FULL SYNCHRONIZATION',
-      detail: 'Memory reconstruction complete.',
-      tag: 'SYNCHRONIZING'
-    }
-  ];
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
@@ -114,28 +114,6 @@ const Preloader = ({ onComplete }) => {
         DNA.push([a, b, t]);
       }
 
-      // Density fog: soft floating memory dust particles
-      for (let i = 0; i < 220; i++) {
-        const q = rnd(i * 3.3);
-        const r = rnd(i * 4.9);
-        const u = rnd(i * 8.2);
-        const y = fract(r + now * (0.002 + 0.003 * u)) * H;
-        const x = fract(q + Math.sin(now * 0.18 + i) * 0.008) * W;
-        const dx = (x - W / 2) / (W / 2);
-        const dy = (y - H / 2) / (H / 2);
-        const opacity = (0.05 + 0.18 * (1 - Math.min(1, Math.sqrt(dx * dx + dy * dy)))) * (0.5 + visual.glow * 0.5);
-
-        ctx.fillStyle =
-          i % 7 === 0
-            ? `rgba(8, 180, 195, ${opacity * 0.85})`
-            : i % 13 === 0
-            ? `rgba(200, 60, 75, ${opacity * 0.8})`
-            : `rgba(90, 115, 126, ${opacity * 0.6})`;
-        ctx.beginPath();
-        ctx.arc(x, y, 0.4 + u * 1.3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
       // Connecting horizontal base-pair rungs
       for (let i = 1; i < count; i += 2) {
         const [a, b, t] = DNA[i];
@@ -213,29 +191,13 @@ const Preloader = ({ onComplete }) => {
         }
       }
 
-      // Horizontal ghost filaments
-      for (let i = 0; i < 160; i++) {
-        const t = rnd(i * 4.19) * 2 - 1;
-        const side = i % 2 ? 1 : -1;
-        const p = strand(t, side);
-        const driftX = (rnd(i * 8.4) - 0.5) * 160 * (0.5 + visual.disperse * 3);
-        const driftY = (rnd(i * 6.22) - 0.5) * 45;
-        const x = p.x + driftX;
-        const y = p.y + driftY;
-        const alpha = (0.07 + 0.25 * rnd(i * 9.2)) * (1 - Math.abs(t) * 0.65) * (1 - visual.disperse * 0.4);
-
-        ctx.fillStyle = i % 8 === 0 ? `rgba(195, 55, 70, ${alpha})` : `rgba(75, 105, 118, ${alpha})`;
-        const len = i % 4 === 0 ? 11 : 3.5;
-        ctx.fillRect(x - len / 2, y, len, 0.85);
-      }
-
       raf = requestAnimationFrame(draw);
     };
 
     draw();
 
     // GSAP Timeline for progression
-    let tl = gsap.timeline({ delay: 0.2 });
+    let tl = gsap.timeline({ delay: 0.1 });
 
     const finish = () => {
       if (finished) return;
@@ -248,28 +210,28 @@ const Preloader = ({ onComplete }) => {
           speed: 2.5,
           disperse: 1,
           glow: 1.6,
-          duration: 0.7,
+          duration: 0.45,
           ease: 'power3.inOut'
         })
         .to(hudRef.current, {
           opacity: 0,
           scale: 0.98,
-          duration: 0.35,
+          duration: 0.2,
           ease: 'power2.in'
         }, '<+0.1')
         .to(wipeRef.current, {
           opacity: 0.95,
-          duration: 0.2,
+          duration: 0.08,
           ease: 'power2.in'
-        }, '-=0.1')
+        }, '-=0.08')
         .to(containerRef.current, {
           opacity: 0,
-          duration: 0.4,
+          duration: 0.1,
           ease: 'power2.out',
-          onComplete: () => {
+          onStart: () => {
             if (onComplete) onComplete();
           }
-        }, '<+0.15');
+        }, '<');
     };
 
     // Store finish handler on container for Skip button
@@ -281,9 +243,9 @@ const Preloader = ({ onComplete }) => {
     }
 
     const counterObj = { value: 0 };
-    const stepDuration = 0.55;
+    const stepDuration = 0.38;
 
-    phaseLabels.forEach((label, i) => {
+    PHASE_LABELS.forEach((label, i) => {
       tl.call(() => {
         setPhaseIdx(i);
       });
@@ -310,7 +272,7 @@ const Preloader = ({ onComplete }) => {
         '<'
       );
 
-      tl.to({}, { duration: 0.08 });
+      tl.to({}, { duration: 0.03 });
     });
 
     tl.call(finish);
@@ -331,14 +293,14 @@ const Preloader = ({ onComplete }) => {
     }
   };
 
-  const activePhase = phaseLabels[phaseIdx] || phaseLabels[0];
+  const activePhase = PHASE_LABELS[phaseIdx] || PHASE_LABELS[0];
 
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 z-[1000] overflow-hidden select-none"
       style={{
-        background: 'radial-gradient(ellipse 80% 67% at 52% 48%, #ffffff 5%, #eef1f2 62%, #dae0e3 100%)',
+        background: 'radial-gradient(ellipse 80% 67% at 52% 48%, #ffffff 5%, #f2f8f9 62%, #e5eff1 100%)',
         color: '#081922'
       }}
     >
@@ -349,89 +311,42 @@ const Preloader = ({ onComplete }) => {
         className="absolute inset-0 w-full h-full block z-10 pointer-events-none"
       />
 
-      {/* Animus Noise Grain */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-20 z-20"
-        style={{
-          backgroundImage:
-            'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'.72\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'.14\'/%3E%3C/svg%3E")'
-        }}
-      />
-
-      {/* Cyber Scanline Overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none z-20"
-        style={{
-          background: 'repeating-linear-gradient(0deg, transparent 0 4px, rgba(72, 94, 107, 0.035) 5px 6px)'
-        }}
-      />
-
       {/* HUD Telemetry Frame */}
       <div ref={hudRef} className="absolute inset-0 z-30 flex flex-col justify-between p-6 md:p-10 pointer-events-none">
         {/* Top Header */}
-        <header className="flex justify-between items-start text-[10px] tracking-[0.2em] font-mono text-[#5f7179]">
-          <div>
-            <div className="font-hud font-bold text-base md:text-lg tracking-[0.16em] text-[#081922] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#08d1d8] animate-ping" />
-              <span>ANIMUS // NEURAL INTERFACE</span>
-            </div>
-            <div className="text-[10px] text-[#71828a] mt-1 tracking-widest">
-              IEEE PRE-XTREME // SESSION 0004
-            </div>
-          </div>
-
-          <div className="text-right leading-relaxed text-[10px] hidden sm:block text-[#5f7179]">
-            <div>
-              GENETIC ARCHIVE: <span className="text-[#08d1d8] font-bold">ONLINE</span>
-            </div>
-            <div>MEMORY INTEGRITY: SYNCHRONIZING</div>
-            <div className="text-[#7d8c94]">RECONSTRUCTION PROTOCOL</div>
-          </div>
+        <header className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-[#5f7179]">
+          <span className="flex items-center gap-2 font-display font-bold tracking-[0.16em] text-[#081922]">
+            <span className="h-2 w-2 bg-[#08d1d8]" />
+            <span>DecodeXtreme</span>
+          </span>
+          <span className="text-[#087e87]">20.0 / Loading</span>
         </header>
 
-        {/* Left Side Rail: Sequence Analysis */}
-        <div className="absolute top-1/2 left-6 md:left-10 -translate-y-1/2 hidden md:flex items-center gap-3 pointer-events-none">
-          <div
-            className="h-44 w-2 opacity-70"
-            style={{
-              background: 'repeating-linear-gradient(to bottom, #9ba8ad 0 1px, transparent 1px 11px)'
-            }}
-          />
-          <div className="font-mono text-[9px] tracking-[0.28em] text-[#8c989e] [writing-mode:vertical-rl] rotate-180">
-            SEQUENCE ANALYSIS / GENETIC CODE
-          </div>
-        </div>
-
         {/* Center Loading Information */}
-        <section className="self-center text-center max-w-lg w-full px-4">
+        <section className="self-center w-full max-w-lg px-4 text-center">
           {/* Status Tag */}
-          <div className="font-mono text-[10px] tracking-[0.38em] text-[#08a5ac] uppercase mb-2 font-medium">
+          <div className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-[#087e87]">
             [ {activePhase.tag} ]
           </div>
 
           {/* Subtitle */}
-          <div className="font-hud text-xs md:text-sm tracking-[0.28em] uppercase text-[#4a5860] font-semibold">
-            GENETIC SEQUENCE RECONSTRUCTION
+          <div className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-[#4a5860]">
+            Synchronizing signal
           </div>
 
           {/* Progress Percentage Display */}
-          <div className="font-hud text-7xl md:text-9xl font-bold tracking-tight text-[#1c2c34] my-2 md:my-4 tabular-nums drop-shadow-[0_2px_12px_rgba(255,255,255,0.9)]">
+          <div className="my-2 font-display text-7xl font-bold tracking-tight text-[#1c2c34] tabular-nums drop-shadow-[0_2px_12px_rgba(255,255,255,0.9)] md:my-4 md:text-9xl">
             {String(count).padStart(3, '0')}
             <span className="text-3xl md:text-4xl text-[#08d1d8] ml-1 font-semibold">%</span>
           </div>
 
           {/* Current Phase */}
-          <div className="font-mono text-xs tracking-[0.25em] text-[#34424a] uppercase min-h-[20px] font-medium">
-            {activePhase.phase}
-          </div>
-
-          {/* Phase Detail */}
-          <div className="font-mono text-[10px] tracking-[0.12em] text-[#78878f] mt-1 min-h-[20px]">
-            {activePhase.detail}
+          <div className="min-h-[20px] font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#34424a]">
+            {activePhase.phase.split(' / ')[1]}
           </div>
 
           {/* Progress Bar */}
-          <div className="w-64 max-w-full h-[2px] bg-[#c7d0d3] mx-auto mt-5 overflow-hidden rounded-full">
+          <div className="mx-auto mt-5 h-1 w-64 max-w-full overflow-hidden bg-[#c7d0d3]">
             <div
               className="h-full bg-[#08d1d8] transition-all duration-75"
               style={{ width: `${count}%` }}
@@ -439,38 +354,12 @@ const Preloader = ({ onComplete }) => {
           </div>
         </section>
 
-        {/* Bottom Phase List and Skip Button */}
-        <footer className="flex flex-col sm:flex-row items-center sm:items-end justify-between text-[10px] font-mono tracking-[0.16em] text-[#71828a] gap-4">
-          <div className="flex gap-4 md:gap-6 flex-wrap justify-center sm:justify-start">
-            {['01 / ACQUISITION', '02 / ALIGNMENT', '03 / DECRYPTION', '04 / SYNCHRONIZATION'].map((step, idx) => (
-              <span
-                key={step}
-                className={`relative pt-3 transition-all duration-300 ${
-                  phaseIdx === idx
-                    ? 'text-[#08a5ac] font-bold opacity-100'
-                    : phaseIdx > idx
-                    ? 'text-[#485b63] opacity-85'
-                    : 'opacity-40 text-[#8e9ca2]'
-                }`}
-              >
-                <span
-                  className={`absolute top-0 left-0 w-full h-[2px] transition-colors duration-300 ${
-                    phaseIdx >= idx ? 'bg-[#08d1d8]' : 'bg-[#9ca9af]'
-                  }`}
-                />
-                {step}
-              </span>
-            ))}
-          </div>
-
+        <footer className="flex items-center justify-center">
           <div className="flex items-center gap-4">
-            <span className="hidden lg:inline text-[9px] tracking-[0.2em] text-[#87969e]">
-              ANIMUS MEMORY ARCHIVE · SESSION SYNC
-            </span>
             <button
               type="button"
               onClick={handleSkip}
-              className="pointer-events-auto border border-[#a6b2b6] hover:border-[#08d1d8] text-[#475760] hover:text-[#08d1d8] px-4 py-1.5 rounded text-[10px] tracking-[0.18em] uppercase transition-all duration-200 bg-white/60 hover:bg-white cursor-pointer flex items-center gap-1.5 shadow-xs"
+              className="pointer-events-auto flex cursor-pointer items-center gap-1.5 border border-[#8fa3a8] bg-white/70 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#475760] transition-all duration-200 hover:border-[#08d1d8] hover:bg-white hover:text-[#087e87]"
             >
               <span>SKIP INTRO</span>
               <span className="text-[#08d1d8]">↗</span>
