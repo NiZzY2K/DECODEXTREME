@@ -8,10 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 const HEADLINE_LINES = ['Think.', 'Solve.', 'Compete.'];
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-// Files inside public/ are served from the site root.
-const ABOUT_BACKGROUND_IMAGE_SRC = '/backgrounds/about/animus-eaglevision-bg.jpg';
-const ABOUT_LEAD_IMAGE_SRC = '/backgrounds/about/projectchair.jpeg';
-
 const LEARNING_TRACKS = [
   {
     num: '01',
@@ -282,12 +278,11 @@ const AboutSection = () => {
         </div>
       </header>
 
-      {/* Desktop: title on the left, full uncropped lead image in the centre, details and protocols on the right.
-          Mobile: the same content becomes a readable vertical sequence. */}
+      {/* Main content */}
       <main className="relative z-10 mx-auto w-full max-w-[90rem] flex-1 px-5 sm:px-8 lg:px-10">
         <div className="relative mx-auto grid w-full grid-cols-1 items-center gap-8 py-8 sm:gap-10 sm:py-10 md:grid-cols-2 md:gap-x-8 xl:min-h-[43rem] xl:grid-cols-12 xl:items-stretch xl:gap-x-7 xl:py-8">
-          {/* Left column: headline and supporting copy */}
-          <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-3 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
+          {/* Left column */}
+          <div className="abx-copy abx-reveal relative z-20 order-1 flex min-w-0 flex-col items-start justify-center md:col-span-1 xl:col-span-5 xl:col-start-1 xl:row-start-1 xl:justify-between xl:py-7">
             <div className="max-w-[24rem]">
               <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.18em] text-[#435b62] sm:text-[10px]">
                 Think beyond the obvious
@@ -324,7 +319,7 @@ const AboutSection = () => {
                 </span>
                 <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary)">Now recruiting</p>
               </div>
-              <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] sm:text-4xl">
+              <p className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-[-0.045em] text-[#081922] sm:text-4xl">
                 Decoders <span className="text-(--color-primary)">wanted.</span>
               </p>
               <p className="mt-3 flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.11em] text-[#556970] sm:text-[10px]">
@@ -334,48 +329,8 @@ const AboutSection = () => {
             </aside>
           </div>
 
-          {/* Centre: no frame, mask, overlay, filter, or object-cover. Keep the composed artwork intact. */}
-          <div className="abx-lead order-2 relative mx-auto h-[min(78svh,37rem)] min-h-[23rem] w-full max-w-[34rem] md:col-span-1 md:h-[36rem] md:max-w-none xl:col-span-5 xl:col-start-4 xl:row-start-1 xl:h-auto xl:min-h-[43rem] xl:w-full xl:self-stretch">
-            <div className="abx-character abx-reveal pointer-events-none absolute inset-0 z-0">
-              <div className="abx-character-parallax h-full w-full">
-                <img
-                  src={ABOUT_LEAD_IMAGE_SRC}
-                  alt="DecodeXtreme project chairperson"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  onError={(event) => {
-                    event.currentTarget.style.visibility = 'hidden';
-                  }}
-                  className="block h-full w-full bg-transparent object-contain object-bottom"
-                />
-              </div>
-            </div>
-            <span aria-hidden="true" className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-[#556970]/60 xl:flex">
-              <span className="h-px w-6 bg-(--color-primary)/70" />
-              Character profile
-              <span className="h-px w-6 bg-(--color-primary)/70" />
-            </span>
-          </div>
-
-          {/* Right column: leadership details, then the three protocols vertically. */}
-          <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-4 xl:col-start-9 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
-            <section className="abx-lead-card abx-reveal relative border-l-2 border-(--color-primary) bg-white/70 backdrop-blur-md py-4 pl-5 pr-2 sm:py-5 sm:pl-6 sm:pr-4 shadow-[0_4px_24px_rgba(8,126,135,0.08)]">
-              <div className="absolute -left-[2px] top-0 h-8 w-[2px] bg-[var(--color-primary)]" aria-hidden="true" />
-              <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-(--color-primary) sm:text-[10px]">
-                Project leadership // 01
-              </p>
-              <h3 data-about-scramble className="mt-2 font-display text-2xl font-bold uppercase leading-[0.95] tracking-[-0.04em] text-[#081922] sm:text-3xl">
-                Project Chairperson
-              </h3>
-              <p data-about-scramble className="mt-2 font-mono text-[9px] uppercase tracking-[0.11em] text-[#435b62] sm:text-[10px] sm:tracking-[0.13em]">
-                Lead Coordinator · DecodeXtreme 2026
-              </p>
-              <p data-about-scramble className="mt-3 max-w-lg text-xs leading-[1.7] text-[#4d646b] sm:text-[13px]">
-                Guiding the initiative from concept to competition and connecting the student community with the skills and confidence to enter the IEEEXtreme arena.
-              </p>
-            </section>
-
+          {/* Right column: protocols */}
+          <div className="abx-right relative z-20 order-3 min-w-0 md:col-span-2 xl:col-span-7 xl:col-start-6 xl:row-start-1 xl:flex xl:flex-col xl:justify-center xl:py-4">
             <section className="mt-8 sm:mt-10 xl:mt-9" aria-labelledby="about-protocols-heading">
               <div className="abx-reveal mb-4 flex items-center gap-3 sm:mb-5">
                 <span aria-hidden="true" className="h-px w-7 shrink-0 bg-(--color-primary)" />
