@@ -16,8 +16,7 @@ import {
   Pause,
   Maximize2,
   Crosshair,
-  Globe2,
-  Compass
+  Globe2
 } from 'lucide-react';
 import './TimelineFullscreenMap.css';
 
@@ -118,6 +117,66 @@ export const timelineData = [
   }
 ];
 
+const DISTRICTS = ['harbor', 'west', 'north', 'market', 'central', 'east', 'gardens', 'south', 'citadel'];
+const BRIDGES = [
+  [28, 29, -23], [34, 67, 27], [53, 41, -30],
+  [61, 73, 18], [73, 29, 27], [78, 66, -20]
+];
+const BUILDING_INDICES = Array.from({ length: 30 }, (_, i) => i);
+
+const ROUTES_DATA = timelineData.slice(1).map((stop, index) => {
+  const previous = timelineData[index];
+  const deltaX = stop.x - previous.x;
+  const deltaY = (stop.y - previous.y) / 2;
+  return {
+    key: stop.checkpoint,
+    index,
+    left: `${previous.x}%`,
+    top: `${previous.y}%`,
+    width: `${Math.hypot(deltaX, deltaY)}%`,
+    transform: `rotate(${Math.atan2(deltaY, deltaX)}rad)`,
+    isFinal: index === timelineData.length - 2
+  };
+});
+
+// Memoized static cartography layer to prevent re-rendering 270+ DOM nodes on state changes
+const AnimusCartography = React.memo(() => (
+  <div
+    className="animus-cartography"
+    role="img"
+    aria-label="City district map with canals, narrow streets, building courtyards, and four mission landmarks"
+  >
+    {DISTRICTS.map((district) => (
+      <div key={district} className={`city-district city-district--${district}`}>
+        <div className="city-buildings">
+          {BUILDING_INDICES.map((block) => (
+            <span key={block} className="city-building" />
+          ))}
+        </div>
+      </div>
+    ))}
+    <div className="city-canal city-canal--grand" />
+    <div className="city-canal city-canal--crossing" />
+    {BRIDGES.map(([left, top, angle]) => (
+      <div
+        key={`${left}-${top}`}
+        className="city-bridge"
+        style={{ left: `${left}%`, top: `${top}%`, rotate: `${angle}deg` }}
+      />
+    ))}
+    {timelineData.map((stop) => (
+      <div
+        key={stop.checkpoint}
+        className={`city-landmark city-landmark--${stop.checkpoint}`}
+        style={{ left: `${stop.x}%`, top: `${stop.y}%` }}
+      />
+    ))}
+    <div className="city-map-label city-map-label--harbor">WESTERN QUAYS</div>
+    <div className="city-map-label city-map-label--market">MARKET DISTRICT</div>
+    <div className="city-map-label city-map-label--citadel">THE CITADEL</div>
+  </div>
+));
+
 const TimelineFullscreenMap = ({ onOpenRegister }) => {
   const sectionRef = useRef(null);
   const triggerRef = useRef(null);
@@ -125,6 +184,7 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
   const dossierRef = useRef(null);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
+  const activeRef = useRef(0);
 
   const [active, setActive] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -133,17 +193,19 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Responsive Screen Check
+  // Sync activeRef with active state for high-frequency ScrollTrigger check
+  activeRef.current = active;
+
+  // Performant Responsive Screen Check via matchMedia (fires only when crossing 768px breakpoint)
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = (e) => setIsMobile(e.matches);
+    setIsMobile(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
   }, []);
 
-  // GSAP ScrollTrigger Pinned Scrollytelling
+  // GSAP ScrollTrigger Pinned Scrollytelling (optimized to only dispatch state when index changes)
   useLayoutEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -158,12 +220,10 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const nextIndex = Math.min(3, Math.floor(self.progress * 4));
-        setActive((prev) => {
-          if (prev !== nextIndex) {
-            return nextIndex;
-          }
-          return prev;
-        });
+        if (activeRef.current !== nextIndex) {
+          activeRef.current = nextIndex;
+          setActive(nextIndex);
+        }
       }
     });
 
@@ -276,55 +336,21 @@ const TimelineFullscreenMap = ({ onOpenRegister }) => {
         ref={mapCanvasRef}
         className="map-canvas-container"
       >
-        <div
-          className="animus-cartography"
-          role="img"
-          aria-label="City district map with canals, narrow streets, building courtyards, and four mission landmarks"
-        >
-          {['harbor', 'west', 'north', 'market', 'central', 'east', 'gardens', 'south', 'citadel'].map((district) => (
-            <div key={district} className={`city-district city-district--${district}`}>
-              <div className="city-buildings">
-                {Array.from({ length: 30 }, (_, block) => (
-                  <span key={block} className="city-building" />
-                ))}
-              </div>
-            </div>
-          ))}
-          <div className="city-canal city-canal--grand" />
-          <div className="city-canal city-canal--crossing" />
-          {[
-            [28, 29, -23], [34, 67, 27], [53, 41, -30],
-            [61, 73, 18], [73, 29, 27], [78, 66, -20]
-          ].map(([left, top, angle]) => (
-            <div key={`${left}-${top}`} className="city-bridge" style={{ left: `${left}%`, top: `${top}%`, rotate: `${angle}deg` }} />
-          ))}
-          {timelineData.map((stop) => (
-            <div key={stop.checkpoint} className={`city-landmark city-landmark--${stop.checkpoint}`} style={{ left: `${stop.x}%`, top: `${stop.y}%` }} />
-          ))}
-          <div className="city-map-label city-map-label--harbor">WESTERN QUAYS</div>
-          <div className="city-map-label city-map-label--market">MARKET DISTRICT</div>
-          <div className="city-map-label city-map-label--citadel">THE CITADEL</div>
-        </div>
+        <AnimusCartography />
 
         <div className="animus-routes" aria-hidden="true">
-          {timelineData.slice(1).map((stop, index) => {
-            const previous = timelineData[index];
-            const deltaX = stop.x - previous.x;
-            const deltaY = (stop.y - previous.y) / 2;
-
-            return (
-              <div
-                key={stop.checkpoint}
-                className={`animus-route${active > index ? ' is-active' : ''}${index === timelineData.length - 2 ? ' is-final' : ''}`}
-                style={{
-                  left: `${previous.x}%`,
-                  top: `${previous.y}%`,
-                  width: `${Math.hypot(deltaX, deltaY)}%`,
-                  transform: `rotate(${Math.atan2(deltaY, deltaX)}rad)`
-                }}
-              />
-            );
-          })}
+          {ROUTES_DATA.map((route) => (
+            <div
+              key={route.key}
+              className={`animus-route${active > route.index ? ' is-active' : ''}${route.isFinal ? ' is-final' : ''}`}
+              style={{
+                left: route.left,
+                top: route.top,
+                width: route.width,
+                transform: route.transform
+              }}
+            />
+          ))}
         </div>
 
         {/* Interactive Location Checkpoints on White Map */}

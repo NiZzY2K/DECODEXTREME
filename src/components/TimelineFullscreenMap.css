@@ -24,6 +24,9 @@ html[data-theme="light"] .timeline-fullscreen {
   aspect-ratio: 2 / 1;
   transform: translate(-50%, -50%);
   will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  contain: layout style;
   /* Semi-transparent wash so cartography is legible over the global AC background */
   background-color: rgba(244, 250, 251, 0.52);
   backdrop-filter: blur(2px);
@@ -37,6 +40,8 @@ html[data-theme="light"] .timeline-fullscreen {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  contain: layout paint style;
+  transform: translateZ(0);
   background-color: transparent;
   background-image:
     linear-gradient(var(--map-grid) 1px, transparent 1px),
@@ -52,6 +57,7 @@ html[data-theme="light"] .timeline-fullscreen {
   clip-path: var(--district-outline);
   padding: 0.7%;
   border: 1px solid #a5a6a0;
+  contain: layout style;
 }
 
 .city-buildings {

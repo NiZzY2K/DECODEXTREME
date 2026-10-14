@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import viewpointBg from '../assets/animus-eaglevision-bg.jpg';
-import sanctuaryBg from '../assets/animus-battlefield-bg.jpg';
+import sanctuaryBg from '../assets/Archive/animus-white-sanctuary.jpg_2K_20261015010127.jpg';
+import viewpointBg from '../assets/Archive/animus-white-viewpoint.jpg_2K_20261015010443.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
