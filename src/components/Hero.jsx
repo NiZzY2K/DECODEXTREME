@@ -266,7 +266,7 @@ const Hero = ({ loading, onOpenRegister }) => {
     <section
       ref={containerRef}
       aria-labelledby="hero-title"
-      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden bg-transparent pt-24 text-[#081922] sm:pt-28 lg:pt-24"
+      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden pt-24 bg-white text-[#081922] sm:pt-28 lg:pt-24"
     >
       {/* Full-bleed cinematic backdrop with soft transparency revealing common Animus background */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">

@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AudioLines, Menu, Volume2, VolumeX, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 
 import NavOverlay from './NavOverlay';
 import SoundAmbiance from './SoundAmbiance';
@@ -12,7 +16,7 @@ const NAV_ITEMS = [
   { label: 'Timeline', id: 'timeline' },
   { label: 'Program', id: 'program' },
   { label: 'Delegate Guide', id: 'guide' },
-  { label: 'Our Team', id: 'operatives' },
+  { label: 'Our Team', id: 'operatives', path: '/team' },
 ];
 
 const Navbar = ({
@@ -23,6 +27,9 @@ const Navbar = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Update the visual state only when crossing the threshold, not on every scroll.
   useEffect(() => {
@@ -62,20 +69,67 @@ const Navbar = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
-  const scrollTo = useCallback((id) => {
-    setIsOpen(false);
-    const target = document.getElementById(id);
-    if (!target) return;
+  
+  const handleNavItemClick = useCallback(
+    (item) => {
+      setIsOpen(false);
 
-    const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
+      // Navigate to a separate page.
+      if (item.path) {
+        navigate(item.path);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        return;
+      }
 
-    target.scrollIntoView({
-      behavior: reduceMotion ? 'auto' : 'smooth',
-      block: 'start',
+      if (!item.id) return;
+
+      // Return home if the requested section isn't on this page.
+      if (location.pathname !== '/') {
+        navigate('/', { state: { scrollTo: item.id } });
+        return;
+      }
+
+      // Scroll directly when already on the homepage.
+      const target = document.getElementById(item.id);
+      if (!target) return;
+
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      target.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    },
+    [navigate, location.pathname],
+  );
+  
+  useEffect(() => {
+    const sectionId = location.state?.scrollTo;
+
+    if (location.pathname !== '/' || !sectionId) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      const target = document.getElementById(sectionId);
+
+      if (target) {
+        const reduceMotion = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
+
+        target.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      }
+
+      // Remove the one-time scroll request.
+      navigate('/', { replace: true, state: null });
     });
-  }, []);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [location.pathname, location.state, navigate]);
 
   const handleRegister = useCallback(() => {
     setIsOpen(false);
@@ -87,7 +141,7 @@ const Navbar = ({
       <NavOverlay
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        onNavigate={scrollTo}
+        onNavigate={handleNavItemClick}
         onOpenRegister={handleRegister}
       />
 
@@ -140,7 +194,7 @@ const Navbar = ({
                   )}
                   <button
                     type="button"
-                    onClick={() => scrollTo(item.id)}
+                    onClick={() => handleNavItemClick(item)}
                     className="nav-angular-button px-3 py-2 font-hud text-xs font-semibold uppercase tracking-[0.09em] text-slate-600 transition-colors hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)]"
                   >
                     {item.label}
