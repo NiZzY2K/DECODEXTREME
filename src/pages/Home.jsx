@@ -99,71 +99,42 @@ export default function Home({ onOpenRegister }) {
                     <div className="hero-grid-overlay" aria-hidden="true" />
                     <div className="container hero-grid">
                         <div className="hero-copy">
-                            <p className="eyebrow" data-reveal>
-                                <span className="status-dot" /> Beyond the code.
-                                Into the challenge.
-                            </p>
                             <HeroHeadline />
                             <ScrambleText className="hero-description">
-                                Sharpen your skills. Assemble your team. Take on
-                                nine hours of competitive coding. Your journey
-                                to IEEEXtreme starts here.
+                                Sharpen your skills. Assemble your team. Your
+                                journey to IEEEXtreme starts here.
                             </ScrambleText>
                             <div className="hero-actions" data-reveal>
                                 <button
                                     className="button"
                                     onClick={() => onOpenRegister()}
                                 >
-                                    Enter the challenge{" "}
+                                    Register now{" "}
                                     <ArrowUpRight size={18} />
                                 </button>
                                 <Link className="text-link" to="/#timeline">
-                                    Explore the map <ArrowDown size={16} />
+                                    Explore map  <ArrowDown size={16} />
                                 </Link>
-                            </div>
-                            <div className="hero-facts" data-reveal>
-                                <span>12—24 October 2026</span>
-                                <span>Online · Free entry</span>
                             </div>
                         </div>
                     </div>
-                    <div
-                        className="container hero-interface-bottom"
-                        aria-hidden="true"
-                    >
-                        <span>
-                            <i /> 03 SESSIONS / 01 CHALLENGE
-                        </span>
-                        <span>
-                            SCROLL TO SYNCHRONISE <ArrowDown size={12} />
-                        </span>
+                    <div className="container organizer-strip">
+                        <p>Organised by</p>
+                        <div>
+                            <img
+                                src={sbLogo}
+                                alt="IEEE Student Branch of SLTC"
+                                width="170"
+                                height="58"
+                            />
+                            <img
+                                src={csLogo}
+                                alt="IEEE Computer Society"
+                                width="170"
+                                height="58"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="container organizer-strip">
-                    <p>
-                        THE ALLIANCE
-                        <br />
-                        <strong>
-                            Organised by IEEE Student Branch of SLTC
-                        </strong>
-                    </p>
-                    <div>
-                        <img
-                            src={sbLogo}
-                            alt="IEEE Student Branch of SLTC"
-                            width="170"
-                            height="58"
-                        />
-                        <img
-                            src={csLogo}
-                            alt="IEEE Computer Society"
-                            width="170"
-                            height="58"
-                        />
-                    </div>
-                    <span className="small-label">
-                        Learn together. Rise together.
-                    </span>
                 </div>
             </section>
 

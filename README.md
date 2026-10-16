@@ -53,7 +53,8 @@ Place portraits in `public/images/team/`. Missing or broken portraits show initi
 - Three fonts: Rajdhani headings, local Satoshi body, JetBrains Mono metadata. The two Google Fonts have local fallbacks.
 - Existing supplied logo assets in navigation and footer.
 - GSAP section reveals, transitions, image parallax and description scrambles respect reduced-motion preferences.
-- A short, skippable logo preloader waits for the logo/fonts, with a timeout to keep entry quick. Page reveals begin after it closes.
+- A short, skippable DNA helix preloader introduces the site, with a timeout to keep entry quick. The hero headline assembles letter by letter with cyan scan effects after it closes. Reduced-motion preferences keep both sequences still.
+- The hero includes the organiser logos within the first screen, allowing natural overflow on very short displays. The shared footer has an opaque pale surface for readable text above the global artwork.
 - The supplied hero video plays muted without visible controls. It pauses offscreen and in background tabs; reduced-motion/data-saving preferences use a still image.
 - The supplied background music attempts to start after the intro at low volume. When browser autoplay is blocked, an Enable sound button lets visitors start it. A persistent sound control pauses/resumes music; background tabs pause it automatically.
 - Timeline is the single session directory; the duplicate ServicesSection is not rendered.
