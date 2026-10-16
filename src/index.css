@@ -149,7 +149,7 @@ p { color: var(--color-muted); }
 .back-link { margin-bottom: 40px; font-size: 12px; color: var(--color-muted); }
 .team-directory { padding-bottom: var(--section-space); }
 .team-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; border-block: 1px solid var(--color-border); padding-block: 20px; }
-.team-filters { display: flex; flex-wrap: wrap; gap: 10px; }
+.team-filters { display: flex; flex-wrap: wrap; gap: 10px; padding-left: 5%; padding-right: 5%;}
 .team-filters button { min-height: 44px; padding: 10px 18px; border: 1px solid transparent; font-size: 12px; border-radius: 3px; }
 .team-filters button.is-active { background: #e0f0f2; border-color: #a5d6dc; }
 .team-filters button:hover { background: #e5eff1; }
@@ -365,7 +365,7 @@ h3 { letter-spacing: 0; }
 .team-empty .eyebrow::before { display: none; }
 .member-portrait { border-radius: 0; border-bottom: 2px solid var(--color-primary); }
 .member-card h3 { font-size: 24px; }
-.team-note { background: var(--color-bg); }
+.team-note { background: var(--color-bg); padding-left: 5%; padding-right: 5%;}
 .registration-dialog { border-radius: 0; border-top: 3px solid var(--color-primary); }
 .registration-dialog h2 { line-height: 1; }
 .registration-dialog::backdrop { background: #d9e7edbf; }
