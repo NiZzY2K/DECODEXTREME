@@ -1,225 +1,33 @@
-import { useEffect, useState } from 'react';
-import { ChevronDown, Linkedin } from 'lucide-react';
-import Footer from '../components/Footer';
+import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, Linkedin, Users, Search } from 'lucide-react';
+import { sectionsAndInfo } from '../config/team';
+import useReveal from '../hooks/useReveal';
+import ScrambleText from '../components/ScrambleText';
+import sanctuary from '../assets/animus-white-sanctuary.jpg';
 
-/*
- * Add departments and members here. Portraits should live in Vite's public/
- * directory, for example: /images/team/member-name.webp.
- */
-const sectionsAndInfo = [
-  {
-    id: 'ambassadors',
-    sectionName: 'Ambassadors',
-    sectionBody: {
-      members: [
-        // Add confirmed members using this shape:
-        // {
-        //   id: 'ambassador-01',
-        //   name: 'Full Name',
-        //   role: 'Lead Ambassador',
-        //   image: '/images/team/ambassador-01.webp',
-        //   linkedin: 'https://www.linkedin.com/in/profile-slug/',
-        // },
-      ],
-    },
-  },
-  {
-    id: 'technical-team',
-    sectionName: 'Technical Team',
-    sectionBody: {
-      members: [],
-    },
-  },
-  // Add additional teams with the same shape:
-  // {
-  //   id: 'media-team',
-  //   sectionName: 'Media & Communications',
-  //   sectionBody: { members: [] },
-  // },
-];
-
-function getInitials(name = '') {
-  return name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join('');
+function MemberCard({ member }) {
+  const [failed, setFailed] = useState(false);
+  const initials = (member.name || '').trim().split(/\s+/).slice(0, 2).map(word => word[0]).join('');
+  const profile = /^https:\/\/(www\.)?linkedin\.com\//i.test(member.linkedin || '') ? member.linkedin : null;
+  return <article className="member-card"><div className="member-portrait">{member.image && !failed ? <img src={member.image} alt={`${member.name} portrait`} width="360" height="400" loading="lazy" decoding="async" onError={() => setFailed(true)} /> : <span aria-label={`Portrait of ${member.name} unavailable`}>{initials || '—'}</span>}{profile && <a className="member-link" href={profile} target="_blank" rel="noreferrer" aria-label={`${member.name} on LinkedIn (opens in new tab)`}><Linkedin size={18} /></a>}</div><h3>{member.name}</h3><p>{member.role}</p></article>;
 }
-
-function TeamMemberCard({ member, index, isVisible }) {
-  const [imageFailed, setImageFailed] = useState(false);
-  const imageSrc = typeof member.image === 'string' ? member.image.trim() : '';
-  const linkedinUrl = typeof member.linkedin === 'string' ? member.linkedin.trim() : '';
-  const hasImage = Boolean(imageSrc) && !imageFailed;
-
-  return (
-    <article
-      className={`group flex h-full flex-col items-center px-3 py-3 text-center transition-[opacity,transform] duration-300 ease-[var(--ease-interface)] ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-      }`}
-      style={{ transitionDelay: isVisible ? `${Math.min(index, 8) * 45}ms` : '0ms' }}
-    >
-      <div className="mb-5 grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface-solid)] p-1 shadow-[var(--glow-primary)] transition-transform duration-300 ease-[var(--ease-interface)] group-hover:scale-[1.04] sm:h-28 sm:w-28">
-        {hasImage ? (
-          <img
-            src={imageSrc}
-            alt={`${member.name || 'Team member'} portrait`}
-            loading="lazy"
-            decoding="async"
-            onError={() => setImageFailed(true)}
-            className="h-full w-full rounded-full object-cover"
-          />
-        ) : (
-          <div
-            className="grid h-full w-full place-items-center rounded-full bg-[var(--color-bg-elevated)] font-display text-2xl font-semibold tracking-tight text-[var(--color-primary)]"
-            aria-label={`Portrait for ${member.name || 'team member'} not added yet`}
-          >
-            <span aria-hidden="true">{getInitials(member.name) || '?'}</span>
-          </div>
-        )}
-      </div>
-
-      <h3 className="max-w-full break-words font-display text-base font-bold leading-snug tracking-tight text-[var(--color-text)] sm:text-lg">
-        {member.name || 'Name to be confirmed'}
-      </h3>
-      {member.role && (
-        <p className="mt-1 max-w-full break-words text-sm leading-relaxed text-[var(--color-primary)] sm:text-base">
-          {member.role}
-        </p>
-      )}
-
-      {linkedinUrl && (
-        <a
-          href={linkedinUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open ${member.name || 'team member'}'s LinkedIn profile in a new tab`}
-          className="mt-3 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold text-[var(--color-text-muted)] transition-colors duration-200 hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]"
-        >
-          <Linkedin size={14} aria-hidden="true" />
-          <span>LinkedIn</span>
-        </a>
-      )}
-    </article>
-  );
+export default function Team() {
+  const root = useRef(null);
+  const [active, setActive] = useState('all');
+  const [query, setQuery] = useState('');
+  useReveal(root);
+  const groups = sectionsAndInfo.map(section => ({ ...section, members: (section.sectionBody?.members || []).filter(member => member.name) }));
+  const count = groups.reduce((total, group) => total + group.members.length, 0);
+  const visible = groups.filter(group => active === 'all' || active === group.id).map(group => ({ ...group, members: group.members.filter(member => `${member.name} ${member.role || ''}`.toLowerCase().includes(query.trim().toLowerCase())) }));
+  const hasResults = visible.some(group => group.members.length);
+  return <main id="main" ref={root} className="team-page">
+    <div className="team-scene" data-section><div className="section-artwork" aria-hidden="true"><img src={sanctuary} alt="" width="1376" height="768" decoding="async" data-parallax /></div><header className="container page-intro" data-reveal><Link className="text-link back-link" to="/">← Back to the experience</Link><p className="eyebrow">The people / DecodeXtreme 2026</p><h1>The minds.<br /><em>Behind the mission.</em></h1><ScrambleText className="section-description">The organisers, builders, and ambassadors behind DecodeXtreme. One crew. One shared mission.</ScrambleText></header></div>
+    <div className="container team-directory">
+      <div className="team-toolbar"><div className="team-filters" role="group" aria-label="Filter by department"><button className={active === 'all' ? 'is-active' : ''} aria-pressed={active === 'all'} onClick={() => setActive('all')}>Everyone{count > 0 && <span>{count}</span>}</button>{groups.map(group => <button key={group.id} className={active === group.id ? 'is-active' : ''} aria-pressed={active === group.id} onClick={() => setActive(group.id)}>{group.sectionName}</button>)}</div>{count > 0 && <label className="team-search"><Search size={17} /><span className="sr-only">Search team members</span><input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a person" /></label>}</div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">{visible.reduce((total, group) => total + group.members.length, 0)} team members shown</div>
+      {hasResults ? visible.filter(group => group.members.length).map(group => <section key={group.id} className="team-group" aria-labelledby={`group-${group.id}`}><div className="team-group-heading"><h2 id={`group-${group.id}`}>{group.sectionName}</h2><p>{group.description}</p></div><div className="member-grid">{group.members.map(member => <MemberCard key={member.id || member.name} member={member} />)}</div></section>) : <div className="team-empty"><span className="line-icon"><Users size={28} strokeWidth={1.4} /></span><p className="eyebrow">{count ? 'Keep exploring' : 'Behind the experience'}</p><h2>{count ? 'No matching people yet.' : 'Crew profiles incoming.'}</h2><p>{count ? 'Try another name or choose a different department.' : 'Our organising team profiles will be shared here soon.'}</p>{count ? <button className="text-link" onClick={() => { setQuery(''); setActive('all'); }}>Clear filters <ArrowUpRight size={17} /></button> : <Link className="text-link" to="/#contact">Get in touch <ArrowUpRight size={17} /></Link>}</div>}
+      <aside className="team-note"><p>An initiative of the <strong>IEEE Student Branch of SLTC</strong><br />and the Computer Society Student Chapter.</p><Link className="text-link" to="/#timeline">Explore the journey <ArrowUpRight size={17} /></Link></aside>
+    </div>
+  </main>;
 }
-
-const Team = ({ onOpenRegister }) => {
-  const [expandedSection, setExpandedSection] = useState(
-    sectionsAndInfo[0]?.id ?? null,
-  );
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-  }, []);
-
-  return (
-    <>
-      <main className="min-h-screen bg-[var(--color-bg)] px-5 pb-20 pt-28 text-[var(--color-text)] sm:px-8 sm:pt-32 lg:px-12">
-        <div className="mx-auto w-full max-w-7xl">
-          {/* Minimal introduction to keep attention on the people. */}
-          <header className="mx-auto mb-12 max-w-3xl text-center sm:mb-16">
-            <p className="mb-3 font-hud text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-primary)] sm:text-sm">
-              DecodeXtreme 2026 · Organising Crew
-            </p>
-            <h1 className="font-display text-4xl font-bold tracking-tight text-[var(--color-text)] sm:text-5xl md:text-6xl">
-              Meet the team
-            </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
-              The people behind DecodeXtreme.
-            </p>
-          </header>
-
-          <div className="mx-auto max-w-6xl" aria-label="Team departments">
-            {sectionsAndInfo.map((section, sectionIndex) => {
-              const isExpanded = expandedSection === section.id;
-              const members = Array.isArray(section.sectionBody?.members)
-                ? section.sectionBody.members
-                : [];
-              const panelId = `team-panel-${section.id}`;
-              const triggerId = `team-trigger-${section.id}`;
-
-              return (
-                <section
-                  key={section.id}
-                  className="border-b border-[var(--color-border)] first:border-t"
-                  aria-labelledby={triggerId}
-                >
-                  <h2>
-                    <button
-                      id={triggerId}
-                      type="button"
-                      aria-expanded={isExpanded}
-                      aria-controls={panelId}
-                      onClick={() =>
-                        setExpandedSection((current) =>
-                          current === section.id ? null : section.id,
-                        )
-                      }
-                      className="group flex min-h-20 w-full items-center gap-4 py-5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] sm:min-h-24 sm:gap-6 sm:py-6"
-                    >
-                      <span className="w-7 shrink-0 font-mono text-xs text-[var(--color-text-dim)] sm:w-9 sm:text-sm">
-                        {String(sectionIndex + 1).padStart(2, '0')}
-                      </span>
-                      <span className="min-w-0 flex-1 font-display text-xl font-semibold tracking-tight text-[var(--color-text)] transition-colors duration-200 group-hover:text-[var(--color-primary)] sm:text-2xl md:text-3xl">
-                        {section.sectionName}
-                      </span>
-                      <span className="rounded-full border border-[var(--color-border)] px-2.5 py-1 font-mono text-[10px] tabular-nums text-[var(--color-text-muted)] sm:text-xs">
-                        {String(members.length).padStart(2, '0')}
-                      </span>
-                      <ChevronDown
-                        size={20}
-                        aria-hidden="true"
-                        className={`shrink-0 text-[var(--color-primary)] transition-transform duration-300 ease-[var(--ease-interface)] ${
-                          isExpanded ? 'rotate-180' : 'rotate-0'
-                        }`}
-                      />
-                    </button>
-                  </h2>
-
-                  {/* Grid-row animation allows the panel to open and close without fixed heights. */}
-                  <div
-                    id={panelId}
-                    aria-hidden={!isExpanded}
-                    inert={!isExpanded}
-                    className={`grid transition-[grid-template-rows,opacity] duration-500 ease-[var(--ease-interface)] ${
-                      isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                    }`}
-                  >
-                    <div className="min-h-0 overflow-hidden">
-                      <div className="pb-9 pt-2 sm:pb-12 sm:pt-4">
-                        {members.length > 0 ? (
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-x-8">
-                            {members.map((member, memberIndex) => (
-                              <TeamMemberCard
-                                key={member.id ?? `${section.id}-${member.name ?? memberIndex}`}
-                                member={member}
-                                index={memberIndex}
-                                isVisible={isExpanded}
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="py-8 text-center text-sm text-[var(--color-text-muted)]">
-                            Team profiles will be added soon.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-
-        </div>
-      </main>
-
-      <Footer onOpenRegister={onOpenRegister} />
-    </>
-  );
-};
-
-export default Team;
