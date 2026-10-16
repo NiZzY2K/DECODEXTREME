@@ -36,6 +36,86 @@
 .about-scene .principle { gap: 18px; }
 .about-scene .principle:last-child { border-bottom: 0; padding-bottom: 0; }
 .about-scene .principle .small-label { font-size: 9px; }
+
+/* Animus Glass Card System */
+.animus-glass-card {
+  position: relative;
+  background: rgba(246, 250, 251, 0.82);
+  border: 1px solid rgba(184, 208, 214, 0.88);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 10px 32px rgba(8, 126, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.animus-glass-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 24px;
+  height: 24px;
+  border-top: 2px solid var(--color-primary);
+  border-right: 2px solid var(--color-primary);
+  pointer-events: none;
+}
+
+/* About Intro Card (01 / The creed) */
+.about-intro-card.animus-glass-card {
+  padding: 34px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 18px 18px 0 #08d1d808, 0 10px 32px rgba(8, 126, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.about-intro-card h2 {
+  margin-top: 14px;
+  margin-bottom: 20px;
+}
+.about-intro-card .section-description {
+  margin-bottom: 26px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: #375260;
+}
+.about-intro-card .text-link {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* Section Headings with Glass Card (02 / The mission map, 03 / Recognition, 04 / Before you join) */
+.section-heading.animus-glass-card {
+  padding: 32px 34px;
+  margin-bottom: 28px;
+}
+.section-heading.animus-glass-card .eyebrow {
+  margin-bottom: 12px;
+}
+.section-heading.animus-glass-card h2 {
+  margin-bottom: 14px;
+}
+.section-heading.animus-glass-card .section-description {
+  margin-top: 0;
+  max-width: 600px;
+  color: #375260;
+  line-height: 1.8;
+}
+.timeline-scene .section-heading.animus-glass-card {
+  max-width: 720px;
+}
+.prizes-layout .section-heading.animus-glass-card {
+  margin-bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 18px 18px 0 #08d1d808, 0 10px 32px rgba(8, 126, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.guide-layout .section-heading.animus-glass-card {
+  margin-bottom: 0;
+  height: fit-content;
+  box-shadow: 18px 18px 0 #08d1d808, 0 10px 32px rgba(8, 126, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
 .scene-caption { display: flex; justify-content: space-between; gap: 18px; margin-top: 70px; padding-top: 16px; border-top: 1px solid #8cafb844; font: 8px/1.8 var(--font-mono); color: #527881; letter-spacing: .1em; }
 .section-bridge { position: absolute; top: 0; left: var(--page-gutter); right: var(--page-gutter); z-index: 3; display: flex; align-items: center; justify-content: center; gap: 10px; transform-origin: 50% 50%; pointer-events: none; }
 .section-bridge span { height: 1px; flex: 1; background: linear-gradient(90deg, transparent, #50bac65c); }
@@ -51,12 +131,75 @@
 .rewards-panel .award:first-child .award-place { color: #087e87; text-shadow: 2px 2px #08d1d836; }
 .rewards-panel .award-place { font-size: 42px; font-weight: 500; width: 46px; }
 .guide-scene { background: transparent; }
+.faq { display: flex; flex-direction: column; gap: 12px; }
+.faq-item.animus-glass-card {
+  border: 1px solid rgba(184, 208, 214, 0.85);
+  background: rgba(246, 250, 251, 0.82);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 4px 18px rgba(8, 126, 135, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  padding: 0 28px;
+  transition: all .25s ease;
+  position: relative;
+}
+.faq-item.animus-glass-card:first-child {
+  border-top: 1px solid rgba(184, 208, 214, 0.85);
+}
+.faq-item.animus-glass-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid transparent;
+  border-right: 2px solid transparent;
+  transition: border-color .25s ease;
+  pointer-events: none;
+}
+.faq-item.animus-glass-card:hover {
+  border-color: rgba(8, 126, 135, 0.5);
+  background: rgba(248, 252, 253, 0.92);
+  box-shadow: 0 8px 24px rgba(8, 126, 135, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.85);
+}
+.faq-item.animus-glass-card:hover::before {
+  border-color: var(--color-primary);
+}
+.faq-item.animus-glass-card.is-active,
+.faq-item.animus-glass-card:has(button[aria-expanded="true"]) {
+  border-color: rgba(8, 126, 135, 0.55);
+  border-left: 3px solid var(--color-primary);
+  background: rgba(248, 252, 253, 0.94);
+  box-shadow: 0 10px 28px rgba(8, 126, 135, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.faq-item.animus-glass-card.is-active::before,
+.faq-item.animus-glass-card:has(button[aria-expanded="true"])::before {
+  border-color: var(--color-primary);
+}
+.faq-item.animus-glass-card button {
+  padding: 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+.faq-item.animus-glass-card div[role="region"] > p {
+  padding: 0 0 22px 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #375260;
+}
 .faq-number { color: var(--color-accent-ink); font: 10px var(--font-mono); padding-right: 5px; }
 .faq-item button > span:nth-child(2) { flex: 1; }
 .faq-item button { transition: color .2s; }
 .faq-item button:hover, .faq-item button[aria-expanded="true"] { color: var(--color-accent-ink); }
 .contact-scene { border: 0; background: transparent; }
 .contact-scene .contact-layout { min-height: 300px; }
+.contact-scene .contact-layout.animus-glass-card {
+  padding: 44px 48px;
+  box-shadow: 18px 18px 0 #08d1d808, 0 10px 32px rgba(8, 126, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
 .scramble-text { position: relative; }
 .scramble-text__word { position: relative; display: inline-block; }
 .scramble-text__visual { position: absolute; inset: 0; pointer-events: none; white-space: nowrap; overflow: hidden; opacity: 0; color: var(--color-accent-ink); }
@@ -146,6 +289,17 @@
   .scene-caption > span:nth-child(2) { display: none; }
   .rewards-panel { padding-inline: 25px; }
   .contact-scene .contact-layout { min-height: 0; }
+  /* Mobile glass card adjustments */
+  .about-intro-card.animus-glass-card { padding: 26px 24px; }
+  .section-heading.animus-glass-card { padding: 26px 24px; margin-bottom: 20px; }
+  .prizes-layout .section-heading.animus-glass-card { height: auto; margin-bottom: 20px; }
+  .guide-layout .section-heading.animus-glass-card { height: auto; }
+  .faq-item.animus-glass-card { padding: 0 20px; }
+  .contact-scene .contact-layout.animus-glass-card { padding: 32px 28px; }
+  /* Mobile nav drawer — full overlay */
+  .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0; padding: 20px var(--page-gutter) 40px; background: rgba(244, 250, 251, 0.96); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid rgba(184, 208, 214, 0.6); box-shadow: 0 20px 60px rgba(20, 44, 56, 0.12); overflow-y: auto; z-index: 49; }
+  .nav-links.is-open { display: flex; flex-direction: column; align-items: stretch; gap: 4px; animation: nav-slide-in .2s ease both; }
+  @keyframes nav-slide-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 }
 @media (max-width: 480px) {
   .hero-screen { min-height: 735px; }
@@ -153,11 +307,13 @@
   .hero-cinematic h1 { font-size: clamp(74px, 22vw, 92px); }
   .hero-cinematic .eyebrow { font-size: 8px; line-height: 1.8; max-width: 300px; }
   .hero-cinematic .hero-description { font-size: 13px; max-width: 310px; line-height: 1.85; }
-  .hero-cinematic .hero-actions { margin-top: 25px; }
+  .hero-cinematic .hero-actions { margin-top: 25px; flex-direction: column; align-items: flex-start; gap: 16px; }
   .hero-cinematic .hero-facts { font-size: 8px; margin-top: 22px; }
-  .hero-interface-bottom { font-size: 7px; padding-right: 128px; }
+  .hero-interface-bottom { font-size: 7px; padding-right: 50px; }
   .hero-interface-bottom > span { gap: 6px; }
+  .hero-interface-bottom > span:last-child { display: none; }
   .hero-cinematic .organizer-strip > div { gap: 30px; }
+  .hero-cinematic .organizer-strip img { width: 120px; height: auto; }
   .about-scene .principles { padding: 22px 18px; }
   .about-scene .principle { gap: 14px; }
   .about-scene .line-icon { width: 38px; height: 38px; }
@@ -169,6 +325,25 @@
   .faq-item button { gap: 12px; font-size: 18px; }
   .ambient-audio-control { bottom: 12px; right: 12px; font-size: 9px; }
   .team-scene .page-intro { padding-bottom: 65px; }
+  /* Small screen glass card tweaks */
+  .about-intro-card.animus-glass-card { padding: 22px 20px; }
+  .about-intro-card h2 { font-size: clamp(34px, 9vw, 52px); margin-bottom: 16px; }
+  .about-intro-card .section-description { font-size: 14px; margin-bottom: 20px; }
+  .section-heading.animus-glass-card { padding: 22px 20px; }
+  .section-heading.animus-glass-card h2 { font-size: clamp(32px, 9vw, 52px); }
+  .faq-item.animus-glass-card { padding: 0 16px; }
+  .faq-item.animus-glass-card button { font-size: 16px; gap: 10px; }
+  .contact-scene .contact-layout.animus-glass-card { padding: 26px 22px; flex-direction: column; gap: 30px; }
+  .contact-scene .contact-layout.animus-glass-card .contact-actions { flex-direction: row; flex-wrap: wrap; gap: 20px; }
+}
+/* Ultra narrow ≤ 360px */
+@media (max-width: 360px) {
+  .hero-cinematic h1 { font-size: clamp(62px, 21vw, 80px); }
+  .hero-cinematic .hero-actions .button { font-size: 13px; }
+  .section-heading.animus-glass-card h2 { font-size: 30px; }
+  .about-intro-card h2 { font-size: 30px; }
+  .hero-cinematic .organizer-strip { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .hero-cinematic .organizer-strip > div { gap: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-backdrop__video { transition: none; }
