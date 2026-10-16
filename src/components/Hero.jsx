@@ -388,6 +388,7 @@ const Hero = ({ loading, onOpenRegister }) => {
       </div>
 
       {/* Organizer ribbon stays in normal document flow, so it never covers content. */}
+            {/* Organizer ribbon stays in normal document flow, so it never covers content. */}
       <div className="hero-organizer relative z-10 mt-auto border-t border-slate-900/10 bg-white/55 px-4 py-5 backdrop-blur-md sm:px-6 sm:py-5 lg:py-4">
         <div className="content-rail mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between sm:gap-8">
           <div className="flex items-center gap-2.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:text-[10px]">

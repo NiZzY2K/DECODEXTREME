@@ -7,7 +7,6 @@ import TimelineFullscreenMap from '../components/TimelineFullscreenMap';
 import HeroBackdrop from '../components/HeroBackdrop';
 import HeroHeadline from '../components/HeroHeadline';
 import ScrambleText from '../components/ScrambleText';
-import sanctuary from '../assets/animus-white-sanctuary.jpg';
 import sbLogo from '../assets/sb-logo-color.webp';
 import csLogo from '../assets/IEEE-CS_LogoTM-orange.webp';
 
@@ -32,9 +31,6 @@ function SectionHeading({ number, label, title, description }) {
     <h2>{title}</h2>
     {description && <ScrambleText className="section-description">{description}</ScrambleText>}
   </div>;
-}
-function SectionArtwork({ src, className = '' }) {
-  return <div className={`section-artwork ${className}`} aria-hidden="true"><img src={src} alt="" width="1376" height="768" loading="lazy" decoding="async" data-parallax /></div>;
 }
 export default function Home({ onOpenRegister }) {
   const root = useRef(null);
@@ -61,7 +57,6 @@ export default function Home({ onOpenRegister }) {
 
     <section id="about" className="section about-scene" aria-labelledby="about-title" data-section>
       <SectionBridge />
-      <SectionArtwork src={sanctuary} />
       <div className="container about-grid">
         <div data-reveal><p className="eyebrow"><span>01</span> / The creed</p><h2 id="about-title">Learn the craft.<br /><em>Master the challenge.</em></h2><ScrambleText className="section-description">DecodeXtreme brings student coders together to sharpen their skills and prepare for IEEEXtreme 20.0. A little guidance. A lot of practice. A team to grow with.</ScrambleText><Link className="text-link" to="/team">Meet the people behind it <ArrowUpRight size={17} /></Link></div>
         <div className="principles">{principles.map(([Icon, title, body], i) => <article className="principle" key={title} data-reveal><span className="line-icon">{createElement(Icon, { size: 22, strokeWidth: 1.5 })}</span><div><span className="small-label">PROTOCOL / 0{i + 1}</span><h3>{title}</h3><ScrambleText>{body}</ScrambleText></div></article>)}</div>
@@ -69,14 +64,13 @@ export default function Home({ onOpenRegister }) {
       <div className="container scene-caption" aria-hidden="true"><span>THE SANCTUARY</span><span>KNOWLEDGE IS YOUR FIRST WEAPON.</span><span>01 / 05</span></div>
     </section>
 
-    <section id="timeline" className="section section-tinted timeline-scene" data-section>
+    <section id="timeline" className="section timeline-scene" data-section>
       <SectionBridge />
       <div className="container"><SectionHeading number="02" label="The mission map" title={<>Your journey.<br /><em>Four checkpoints.</em></>} description="From your first session to the final submission. All times are Sri Lanka time (UTC+05:30)." /><div data-reveal><TimelineFullscreenMap onOpenRegister={onOpenRegister} /></div></div>
     </section>
 
     <section id="prizes" className="section rewards-scene" data-section>
       <SectionBridge />
-      <SectionArtwork src="/backgrounds/servicessection/animus-battlefield-bg.jpg" />
       <div className="container prizes-layout"><SectionHeading number="03" label="Recognition" title={<>Earn your<br /><em>place.</em></>} description="Recognition for the teams that rise to the challenge. Prize details will be announced by the organisers." /><div className="rewards-panel" data-reveal><div className="awards">{['Champions', '1st runners-up', '2nd runners-up'].map((title, i) => <article className="award" key={title}><span className="award-place">0{i + 1}</span><h3>{title}</h3><Trophy size={21} strokeWidth={1.5} /></article>)}</div><ScrambleText className="certificate-note">Participation certificates for eligible delegates who attend all three sessions and take part in PreXtreme.</ScrambleText></div></div>
     </section>
 
@@ -87,8 +81,8 @@ export default function Home({ onOpenRegister }) {
 
     <section id="contact" className="section contact-section contact-scene" data-section>
       <SectionBridge />
-      <SectionArtwork src="/backgrounds/about/animus-eaglevision-bg.jpg" />
       <div className="container contact-layout" data-reveal><div><p className="eyebrow">05 / The next chapter</p><h2>Ready to<br /><em>enter?</em></h2><ScrambleText>Have a question? The organising team is here to help.</ScrambleText><a className="text-link" href={`mailto:${event.email}`}><Mail size={18} />{event.email}</a></div><div className="contact-actions"><button className="button" onClick={() => onOpenRegister()}>Join DecodeXtreme <ArrowUpRight size={18} /></button><Link className="text-link" to="/team">Meet our team <ArrowRight size={17} /></Link></div></div>
     </section>
   </main>;
 }
+

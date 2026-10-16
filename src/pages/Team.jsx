@@ -4,7 +4,6 @@ import { ArrowUpRight, Linkedin, Users, Search } from 'lucide-react';
 import { sectionsAndInfo } from '../config/team';
 import useReveal from '../hooks/useReveal';
 import ScrambleText from '../components/ScrambleText';
-import sanctuary from '../assets/animus-white-sanctuary.jpg';
 
 function MemberCard({ member }) {
   const [failed, setFailed] = useState(false);
@@ -22,7 +21,7 @@ export default function Team() {
   const visible = groups.filter(group => active === 'all' || active === group.id).map(group => ({ ...group, members: group.members.filter(member => `${member.name} ${member.role || ''}`.toLowerCase().includes(query.trim().toLowerCase())) }));
   const hasResults = visible.some(group => group.members.length);
   return <main id="main" ref={root} className="team-page">
-    <div className="team-scene" data-section><div className="section-artwork" aria-hidden="true"><img src={sanctuary} alt="" width="1376" height="768" decoding="async" data-parallax /></div><header className="container page-intro" data-reveal><Link className="text-link back-link" to="/">← Back to the experience</Link><p className="eyebrow">The people / DecodeXtreme 2026</p><h1>The minds.<br /><em>Behind the mission.</em></h1><ScrambleText className="section-description">The organisers, builders, and ambassadors behind DecodeXtreme. One crew. One shared mission.</ScrambleText></header></div>
+    <div className="team-scene" data-section><header className="container page-intro" data-reveal><Link className="text-link back-link" to="/">← Back to the experience</Link><p className="eyebrow">The people / DecodeXtreme 2026</p><h1>The minds.<br /><em>Behind the mission.</em></h1><ScrambleText className="section-description">The organisers, builders, and ambassadors behind DecodeXtreme. One crew. One shared mission.</ScrambleText></header></div>
     <div className="container team-directory">
       <div className="team-toolbar"><div className="team-filters" role="group" aria-label="Filter by department"><button className={active === 'all' ? 'is-active' : ''} aria-pressed={active === 'all'} onClick={() => setActive('all')}>Everyone{count > 0 && <span>{count}</span>}</button>{groups.map(group => <button key={group.id} className={active === group.id ? 'is-active' : ''} aria-pressed={active === group.id} onClick={() => setActive(group.id)}>{group.sectionName}</button>)}</div>{count > 0 && <label className="team-search"><Search size={17} /><span className="sr-only">Search team members</span><input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a person" /></label>}</div>
       <div aria-live="polite" aria-atomic="true" className="sr-only">{visible.reduce((total, group) => total + group.members.length, 0)} team members shown</div>
