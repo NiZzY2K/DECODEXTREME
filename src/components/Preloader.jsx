@@ -1,380 +1,262 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
+import logo from '../assets/DecodeXtreme Logo.webp';
+import '../styles/dna-preloader.css';
 
-const PHASE_LABELS = [
-  {
-    phase: '01 / DNA SIGNAL ACQUISITION',
-    detail: 'Searching encoded memory fragments...',
-    tag: 'ACQUIRING SIGNAL'
-  },
-  {
-    phase: '02 / STRAND ALIGNMENT',
-    detail: 'Rebuilding sequence structure...',
-    tag: 'MAPPING STRANDS'
-  },
-  {
-    phase: '03 / CIPHER DECRYPTION',
-    detail: 'Resolving encrypted memory sectors...',
-    tag: 'DECODING ARCHIVE'
-  },
-  {
-    phase: '04 / FULL SYNCHRONIZATION',
-    detail: 'Memory reconstruction complete.',
-    tag: 'SYNCHRONIZING'
-  }
-];
+const PHASES = ['Acquiring DNA signal', 'Aligning the strands', 'Decoding the sequence', 'Synchronization complete'];
 
-const Preloader = ({ onComplete }) => {
+export default function Preloader({ onComplete }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const wipeRef = useRef(null);
   const hudRef = useRef(null);
-
-  const [count, setCount] = useState(0);
-  const [phaseIdx, setPhaseIdx] = useState(0);
+  const wipeRef = useRef(null);
+  const logoRef = useRef(null);
+  const countRef = useRef(null);
+  const phaseRef = useRef(null);
+  const progressRef = useRef(null);
+  const skipRef = useRef(null);
 
   useLayoutEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let W = 0;
-    let H = 0;
-    let dpr = 1;
-    let now = 0;
-    let raf = 0;
+    const logoImage = logoRef.current;
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let ctx;
+    try { ctx = canvas.getContext('2d'); } catch { /* The intro also works without canvas. */ }
+    let disposed = false;
     let finished = false;
+    let completed = false;
+    let minimumElapsed = false;
+    let resourcesReady = 0;
+    let width = 0;
+    let height = 0;
+    let rotation = 0;
+    let lastCount = -1;
+    let lastFrame = -1;
+    let minimumTimer;
+    let maximumTimer;
+    let sequence;
+    let exitTimeline;
+    let nodes = [];
+    const visual = { spread: 1, glow: 0.65, disperse: 0, speed: 1, turn: 0 };
+    const progress = { value: 0 };
 
-    const visual = {
-      speed: 1,
-      spread: 1,
-      resolve: 0,
-      glow: 0.65,
-      disperse: 0,
-      turn: 0
-    };
-
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      canvas.style.width = `${W}px`;
-      canvas.style.height = `${H}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    window.addEventListener('resize', resize);
-    resize();
-
-    const fract = (x) => x - Math.floor(x);
-    const rnd = (x) => fract(Math.sin(x * 127.1 + 78.233) * 43758.5453123);
-
-    // Horizontal DNA Double Helix strand calculation
-    const strand = (t, s) => {
-      const cycles = W > 768 ? 3 : 2;
-      const ph = t * Math.PI * cycles + now * 0.42 + visual.turn;
-      const rad = Math.cos(ph);
-      const scale = Math.min(W / 1200, H / 760, 1.5);
-      const A = Math.min(125, Math.max(50, H * 0.16)) * visual.spread;
-      const perspective = 0.68 + (0.32 * (rad + 1)) / 2;
-
-      return {
-        // x spans horizontally across screen width with edge bleed
-        x: W * 0.5 + t * (W * 0.52),
-        // y oscillates vertically around center
-        y: H * 0.5 + Math.sin(ph) * A * s * perspective,
-        z: rad * s,
-        scale,
-        perspective
-      };
-    };
-
-    const draw = () => {
-      now += 0.012 * visual.speed;
-      ctx.clearRect(0, 0, W, H);
-
-      // Atmospheric radial gradient for pristine white Animus corridor
-      const g = ctx.createRadialGradient(W * 0.5, H * 0.5, 10, W * 0.5, H * 0.5, Math.max(W, H) * 0.55);
-      g.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-      g.addColorStop(0.55, 'rgba(235, 240, 242, 0.08)');
-      g.addColorStop(1, 'rgba(215, 222, 226, 0.03)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-
-      // Compute DNA nodes along horizontal span
-      const count = Math.min(220, Math.max(100, Math.floor(W / 6.5)));
-      const DNA = [];
-      for (let i = 0; i < count; i++) {
-        const t = (i / (count - 1) - 0.5) * 2;
-        const a = strand(t, 1);
-        const b = strand(t, -1);
-        DNA.push([a, b, t]);
+    const renderProgress = () => {
+      const nextCount = Math.round(progress.value);
+      if (nextCount !== lastCount) {
+        countRef.current.textContent = String(nextCount).padStart(3, '0');
+        lastCount = nextCount;
       }
+      progressRef.current.style.transform = `scaleX(${progress.value / 100})`;
+    };
 
-      // Connecting horizontal base-pair rungs
-      for (let i = 1; i < count; i += 2) {
-        const [a, b, t] = DNA[i];
-        const near = Math.max(0, Math.cos(t * Math.PI * 0.5) * 0.35 + 0.65);
-        const depth = (a.z + 1) / 2;
-        const alpha = (0.12 + 0.42 * depth) * near * (1 - visual.disperse);
-
-        const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-        grad.addColorStop(0, `rgba(8, 170, 185, ${alpha})`);
-        grad.addColorStop(0.5, `rgba(120, 145, 155, ${alpha * 0.8})`);
-        grad.addColorStop(1, `rgba(195, 55, 70, ${alpha})`);
-
+    // The original horizontal double helix: cyan/crimson strands, base pairs and data nodes.
+    const draw = () => {
+      if (!ctx || disposed) return;
+      ctx.clearRect(0, 0, width, height);
+      const amplitude = Math.min(125, Math.max(60, height * 0.16)) * visual.spread;
+      const cycles = width > 768 ? 3 : 2;
+      for (let index = 0; index < nodes.length; index += 1) {
+        const node = nodes[index];
+        const phase = node.t * Math.PI * cycles + rotation + visual.turn;
+        const depth = Math.cos(phase);
+        const perspective = 0.68 + 0.16 * (depth + 1);
+        node.x = width * 0.5 + node.t * width * 0.52;
+        node.y = Math.sin(phase) * amplitude * perspective;
+        node.z = depth;
+      }
+      for (let index = 1; index < nodes.length; index += 2) {
+        const node = nodes[index];
+        const depth = (node.z + 1) / 2;
+        const alpha = (0.12 + 0.42 * depth) * node.fade * (1 - visual.disperse);
+        const y1 = height * 0.5 + node.y;
+        const y2 = height * 0.5 - node.y;
+        const gradient = ctx.createLinearGradient(node.x, y1, node.x, y2);
+        gradient.addColorStop(0, `rgba(8, 180, 190, ${alpha})`);
+        gradient.addColorStop(0.5, `rgba(120, 145, 155, ${alpha * 0.8})`);
+        gradient.addColorStop(1, `rgba(195, 55, 70, ${alpha})`);
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
+        ctx.moveTo(node.x, y1);
+        ctx.lineTo(node.x, y2);
         ctx.lineWidth = 0.85;
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = gradient;
         ctx.stroke();
       }
-
-      // Dual strands as long continuous ribbons (Strand 0 = Cyan/Slate, Strand 1 = Crimson)
-      for (let s = 0; s < 2; s++) {
-        for (let pass = 0; pass < 3; pass++) {
+      for (let strand = 0; strand < 2; strand += 1) {
+        const direction = strand === 0 ? 1 : -1;
+        const color = strand === 0 ? '8, 180, 190' : '195, 55, 70';
+        for (let pass = 0; pass < 3; pass += 1) {
           ctx.beginPath();
-          for (let i = 0; i < count; i++) {
-            const p = DNA[i][s];
-            const j = pass - 1;
-            const x = p.x;
-            const y = p.y + j * (1.8 + Math.abs(p.z) * 2.8);
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          }
-
-          if (s === 0) {
-            // Cyan / Slate strand
-            ctx.strokeStyle =
-              pass === 1
-                ? `rgba(8, 165, 180, ${0.4 + 0.45 * visual.glow})`
-                : `rgba(50, 120, 135, ${0.12 * visual.glow})`;
-            ctx.lineWidth = pass === 1 ? 1.8 : 3.4;
-          } else {
-            // Crimson strand
-            ctx.strokeStyle =
-              pass === 1
-                ? `rgba(195, 55, 70, ${0.4 + 0.45 * visual.glow})`
-                : `rgba(215, 75, 90, ${0.12 * visual.glow})`;
-            ctx.lineWidth = pass === 1 ? 1.8 : 3.4;
-          }
+          nodes.forEach((node, index) => {
+            const y = height * 0.5 + node.y * direction + (pass - 1) * (1.8 + Math.abs(node.z) * 2.8);
+            if (index === 0) ctx.moveTo(node.x, y);
+            else ctx.lineTo(node.x, y);
+          });
+          ctx.strokeStyle = `rgba(${color}, ${pass === 1 ? 0.4 + 0.4 * visual.glow : 0.12 * visual.glow})`;
+          ctx.lineWidth = pass === 1 ? 1.8 : 3.4;
           ctx.stroke();
         }
-      }
-
-      // Genomic data pixels (Base nodes)
-      for (let i = 0; i < count; i += 2) {
-        const [a, b, t] = DNA[i];
-        for (let s = 0; s < 2; s++) {
-          const p = s ? b : a;
-          const z = Math.max(0, (p.z + 1) / 2);
-          const fade = Math.pow(Math.max(0, 1 - Math.pow(Math.abs(t), 2)), 0.4);
-          const n = rnd(i * 19 + s * 7);
-          const alpha = (0.22 + 0.75 * z) * fade * (0.4 + visual.glow * 0.6);
-          const size = 1.2 + 2.8 * z;
-
-          ctx.fillStyle = s === 0 ? `rgba(8, 160, 175, ${alpha})` : `rgba(195, 50, 65, ${alpha})`;
-          ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size);
-
-          if (n > 0.88) {
-            ctx.strokeStyle = s === 0 ? `rgba(8, 160, 175, ${alpha * 0.55})` : `rgba(195, 50, 65, ${alpha * 0.55})`;
+        for (let index = 0; index < nodes.length; index += 2) {
+          const node = nodes[index];
+          const depth = Math.max(0, (node.z * direction + 1) / 2);
+          const alpha = (0.22 + 0.75 * depth) * node.fade * (0.4 + visual.glow * 0.6);
+          const size = 1.2 + 2.8 * depth;
+          const y = height * 0.5 + node.y * direction;
+          ctx.fillStyle = `rgba(${color}, ${alpha})`;
+          ctx.fillRect(node.x - size / 2, y - size / 2, size, size);
+          if (index % 14 === 0) {
+            ctx.strokeStyle = `rgba(${color}, ${alpha * 0.55})`;
             ctx.lineWidth = 0.75;
             ctx.beginPath();
-            ctx.moveTo(p.x, p.y - 7);
-            ctx.lineTo(p.x, p.y + 7);
+            ctx.moveTo(node.x, y - 7);
+            ctx.lineTo(node.x, y + 7);
             ctx.stroke();
           }
         }
       }
-
-      raf = requestAnimationFrame(draw);
     };
 
-    draw();
+    const resize = () => {
+      if (!ctx || disposed) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      width = container.clientWidth;
+      height = container.clientHeight;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.min(180, Math.max(80, Math.floor(width / 7)));
+      nodes = Array.from({ length: count }, (_, index) => {
+        const t = (index / (count - 1) - 0.5) * 2;
+        return { t, x: 0, y: 0, z: 0, fade: Math.pow(Math.max(0, 1 - t * t), 0.4) };
+      });
+      draw();
+    };
 
-    // GSAP Timeline for progression
-    let tl = gsap.timeline({ delay: 0.1 });
+    const tick = (time, deltaTime) => {
+      if (disposed || preference.matches || document.hidden) return;
+      rotation += Math.min(deltaTime, 50) * 0.00055 * visual.speed;
+      // Cap drawing at 60 fps without changing GSAP's shared ticker settings.
+      if (time - lastFrame < 1 / 60) return;
+      lastFrame = time;
+      draw();
+    };
+
+    const complete = () => {
+      if (disposed || completed) return;
+      completed = true;
+      gsap.ticker.remove(tick);
+      onComplete?.();
+    };
 
     const finish = () => {
-      if (finished) return;
+      if (disposed || finished) return;
       finished = true;
-
-      const endTl = gsap.timeline();
-      endTl
-        .to(visual, {
-          spread: 0.02,
-          speed: 2.5,
-          disperse: 1,
-          glow: 1.6,
-          duration: 0.45,
-          ease: 'power3.inOut'
-        })
-        .to(hudRef.current, {
-          opacity: 0,
-          scale: 0.98,
-          duration: 0.2,
-          ease: 'power2.in'
-        }, '<+0.1')
-        .to(wipeRef.current, {
-          opacity: 0.95,
-          duration: 0.08,
-          ease: 'power2.in'
-        }, '-=0.08')
-        .to(containerRef.current, {
-          opacity: 0,
-          duration: 0.1,
-          ease: 'power2.out',
-          onStart: () => {
-            if (onComplete) onComplete();
-          }
-        }, '<');
+      clearTimeout(minimumTimer);
+      clearTimeout(maximumTimer);
+      sequence?.kill();
+      phaseRef.current.textContent = PHASES[3];
+      if (preference.matches) {
+        progress.value = 100;
+        renderProgress();
+        gsap.set(container, { opacity: 0 });
+        complete();
+        return;
+      }
+      exitTimeline = gsap.timeline({ onComplete: complete })
+        .to(progress, { value: 100, duration: 0.15, onUpdate: renderProgress, ease: 'power2.out' }, 0)
+        .to(visual, { spread: 0.015, disperse: 1, glow: 1.1, speed: 2, duration: 0.34, ease: 'power3.inOut' }, 0)
+        .to(hudRef.current, { opacity: 0, y: -6, duration: 0.2, ease: 'power2.in' }, 0.12)
+        .to(wipeRef.current, { opacity: 0.7, duration: 0.14, ease: 'power2.out' }, 0.24)
+        .to(container, { opacity: 0, duration: 0.18, ease: 'power2.out' }, 0.3);
     };
 
-    // Store finish handler on container for Skip button
-    if (containerRef.current) {
-      containerRef.current.__finish = () => {
-        if (tl) tl.kill();
-        finish();
-      };
+    const settled = () => {
+      if (disposed || finished) return;
+      resourcesReady += 1;
+      if (resourcesReady === 2 && minimumElapsed) finish();
+    };
+
+    const preferenceChanged = () => {
+      if (!preference.matches || disposed) return;
+      gsap.ticker.remove(tick);
+      sequence?.kill();
+      draw();
+      if (finished) {
+        exitTimeline?.kill();
+        gsap.set(container, { opacity: 0 });
+        complete();
+      } else finish();
+    };
+
+    gsap.set(container, { opacity: 1 });
+    gsap.set(hudRef.current, { opacity: 1, y: 0 });
+    gsap.set(wipeRef.current, { opacity: 0 });
+    phaseRef.current.textContent = PHASES[0];
+    renderProgress();
+    resize();
+    skipRef.current = finish;
+    window.addEventListener('resize', resize);
+    preference.addEventListener('change', preferenceChanged);
+
+    if (!preference.matches) {
+      if (ctx) gsap.ticker.add(tick);
+      sequence = gsap.timeline();
+      [24, 52, 78, 94].forEach((value, index) => {
+        sequence.call(() => { phaseRef.current.textContent = PHASES[Math.min(index, 2)]; });
+        sequence.to(progress, { value, duration: 0.36, ease: 'power1.inOut', onUpdate: renderProgress });
+        sequence.to(visual, { speed: 1 + index * 0.2, glow: 0.65 + index * 0.1, turn: (index + 1) * 0.15, duration: 0.36, ease: 'sine.inOut' }, '<');
+      });
     }
 
-    const counterObj = { value: 0 };
-    const stepDuration = 0.38;
-
-    PHASE_LABELS.forEach((label, i) => {
-      tl.call(() => {
-        setPhaseIdx(i);
-      });
-
-      tl.to(counterObj, {
-        value: (i + 1) * 25,
-        duration: stepDuration,
-        ease: 'power1.inOut',
-        onUpdate: () => {
-          setCount(Math.round(counterObj.value));
-        }
-      });
-
-      tl.to(
-        visual,
-        {
-          speed: 1.15 + i * 0.15,
-          glow: 0.65 + i * 0.12,
-          spread: 1 + i * 0.06,
-          turn: (i + 1) * 0.2,
-          duration: stepDuration,
-          ease: 'sine.inOut'
-        },
-        '<'
-      );
-
-      tl.to({}, { duration: 0.03 });
-    });
-
-    tl.call(finish);
+    minimumTimer = setTimeout(() => {
+      minimumElapsed = true;
+      if (resourcesReady === 2) finish();
+    }, preference.matches ? 450 : 1450);
+    // Fonts, images or a failed canvas must never hold the visitor in the intro.
+    maximumTimer = setTimeout(finish, preference.matches ? 650 : 1850);
+    Promise.resolve(document.fonts?.ready).then(settled, settled);
+    if (typeof logoImage.decode === 'function') logoImage.decode().then(settled, settled);
+    else if (logoImage.complete) Promise.resolve().then(settled);
+    else {
+      logoImage.addEventListener('load', settled, { once: true });
+      logoImage.addEventListener('error', settled, { once: true });
+    }
 
     return () => {
+      disposed = true;
+      skipRef.current = null;
+      clearTimeout(minimumTimer);
+      clearTimeout(maximumTimer);
+      sequence?.kill();
+      exitTimeline?.kill();
+      gsap.ticker.remove(tick);
+      preference.removeEventListener('change', preferenceChanged);
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(raf);
-      if (tl) tl.kill();
-      gsap.killTweensOf(visual);
+      logoImage.removeEventListener('load', settled);
+      logoImage.removeEventListener('error', settled);
+      ctx?.clearRect(0, 0, width, height);
     };
   }, [onComplete]);
 
-  const handleSkip = () => {
-    if (containerRef.current && containerRef.current.__finish) {
-      containerRef.current.__finish();
-    } else if (onComplete) {
-      onComplete();
-    }
-  };
-
-  const activePhase = PHASE_LABELS[phaseIdx] || PHASE_LABELS[0];
-
-  return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 z-[1000] overflow-hidden select-none"
-      style={{
-        background: 'radial-gradient(ellipse 80% 67% at 52% 48%, #ffffff 5%, #f2f8f9 62%, #e5eff1 100%)',
-        color: '#081922'
-      }}
-    >
-      {/* Horizontal DNA Canvas */}
-      <canvas
-        ref={canvasRef}
-        aria-label="Animated horizontal DNA memory helix"
-        className="absolute inset-0 w-full h-full block z-10 pointer-events-none"
-      />
-
-      {/* HUD Telemetry Frame */}
-      <div ref={hudRef} className="absolute inset-0 z-30 flex flex-col justify-between p-6 md:p-10 pointer-events-none">
-        {/* Top Header */}
-        <header className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-[#5f7179]">
-          <span className="flex items-center gap-2 font-display font-bold tracking-[0.16em] text-[#081922]">
-            <span className="h-2 w-2 bg-[#08d1d8]" />
-            <span>DecodeXtreme</span>
-          </span>
-          <span className="text-[#087e87]">20.0 / Loading</span>
-        </header>
-
-        {/* Center Loading Information */}
-        <section className="self-center w-full max-w-lg px-4 text-center">
-          {/* Status Tag */}
-          <div className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-[#087e87]">
-            [ {activePhase.tag} ]
-          </div>
-
-          {/* Subtitle */}
-          <div className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-[#4a5860]">
-            Synchronizing signal
-          </div>
-
-          {/* Progress Percentage Display */}
-          <div className="my-2 font-display text-7xl font-bold tracking-tight text-[#1c2c34] tabular-nums drop-shadow-[0_2px_12px_rgba(255,255,255,0.9)] md:my-4 md:text-9xl">
-            {String(count).padStart(3, '0')}
-            <span className="text-3xl md:text-4xl text-[#08d1d8] ml-1 font-semibold">%</span>
-          </div>
-
-          {/* Current Phase */}
-          <div className="min-h-[20px] font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#34424a]">
-            {activePhase.phase.split(' / ')[1]}
-          </div>
-
-          {/* Progress Bar */}
-          <div className="mx-auto mt-5 h-1 w-64 max-w-full overflow-hidden bg-[#c7d0d3]">
-            <div
-              className="h-full bg-[#08d1d8] transition-all duration-75"
-              style={{ width: `${count}%` }}
-            />
-          </div>
-        </section>
-
-        <footer className="flex items-center justify-center">
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={handleSkip}
-              className="pointer-events-auto flex cursor-pointer items-center gap-1.5 border border-[#8fa3a8] bg-white/70 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#475760] transition-all duration-200 hover:border-[#08d1d8] hover:bg-white hover:text-[#087e87]"
-            >
-              <span>SKIP INTRO</span>
-              <span className="text-[#08d1d8]">↗</span>
-            </button>
-          </div>
-        </footer>
+  return <div ref={containerRef} className="dna-preloader" role="status" aria-label="Loading DecodeXtreme">
+    <canvas ref={canvasRef} className="dna-preloader__canvas" aria-hidden="true" />
+    <div ref={hudRef} className="dna-preloader__hud">
+      <header className="dna-preloader__header" aria-hidden="true">
+        <img ref={logoRef} src={logo} alt="" width="200" height="62" fetchPriority="high" />
+        <span>DNA sequence / 2026</span>
+      </header>
+      <div className="dna-preloader__telemetry" aria-hidden="true">
+        <p className="dna-preloader__eyebrow">Memory synchronization</p>
+        <p className="dna-preloader__count"><span ref={countRef}>000</span><span className="dna-preloader__percent">%</span></p>
+        <p ref={phaseRef} className="dna-preloader__phase">Acquiring DNA signal</p>
+        <div className="dna-preloader__track"><span ref={progressRef} /></div>
       </div>
-
-      {/* Animus Flash Wipe Overlay */}
-      <div
-        ref={wipeRef}
-        className="absolute inset-0 bg-white pointer-events-none opacity-0 z-40 transition-opacity"
-      />
+      <footer className="dna-preloader__footer">
+        <span aria-hidden="true">Think. Solve. Compete.</span>
+        <button type="button" className="dna-preloader__skip" onClick={() => skipRef.current?.()}>Skip intro <span aria-hidden="true">↗</span></button>
+        <span aria-hidden="true">DecodeXtreme 2026</span>
+      </footer>
     </div>
-  );
-};
-
-export default Preloader;
+    <div ref={wipeRef} className="dna-preloader__wipe" aria-hidden="true" />
+  </div>;
+}

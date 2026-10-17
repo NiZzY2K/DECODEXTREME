@@ -266,7 +266,7 @@ const Hero = ({ loading, onOpenRegister }) => {
     <section
       ref={containerRef}
       aria-labelledby="hero-title"
-      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden bg-transparent pt-24 text-[#081922] sm:pt-28 lg:pt-24"
+      className="hero-immersive relative isolate flex min-h-svh w-full flex-col overflow-hidden pt-24 bg-white text-[#081922] sm:pt-28 lg:pt-24"
     >
       {/* Full-bleed cinematic backdrop with soft transparency revealing common Animus background */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
@@ -388,6 +388,7 @@ const Hero = ({ loading, onOpenRegister }) => {
       </div>
 
       {/* Organizer ribbon stays in normal document flow, so it never covers content. */}
+            {/* Organizer ribbon stays in normal document flow, so it never covers content. */}
       <div className="hero-organizer relative z-10 mt-auto border-t border-slate-900/10 bg-white/55 px-4 py-5 backdrop-blur-md sm:px-6 sm:py-5 lg:py-4">
         <div className="content-rail mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between sm:gap-8">
           <div className="flex items-center gap-2.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:text-[10px]">
