@@ -11,7 +11,7 @@ import {
     Mail,
 } from "lucide-react";
 import useReveal from "../hooks/useReveal";
-import { questions, principles } from '../config/content';
+import { questions, principles, eventHighlights } from '../config/content';
 import { event } from "../config/event";
 import TimelineFullscreenMap from "../components/TimelineFullscreenMap";
 import HeroBackdrop from "../components/HeroBackdrop";
@@ -52,6 +52,7 @@ export default function Home({ onOpenRegister }) {
                     <div className="hero-grid-overlay" aria-hidden="true" />
                     <div className="container hero-grid">
                         <div className="hero-copy">
+                            <p className="eyebrow hero-edition">DecodeXtreme 2026 <span aria-hidden="true">/</span> IEEE SLTC</p>
                             <HeroHeadline />
                             <ScrambleText className="hero-description">
                                 Sharpen your skills. Assemble your team. Your
@@ -98,6 +99,17 @@ export default function Home({ onOpenRegister }) {
                 data-section
             >
 
+                <div className="container event-highlights" aria-label="The DecodeXtreme experience">
+                    {eventHighlights.map(highlight => (
+                        <div className="event-highlight" key={highlight.label} data-reveal>
+                            <span className="event-highlight__value">{highlight.value}</span>
+                            <div>
+                                <p className="event-highlight__label">{highlight.label}</p>
+                                <ScrambleText>{highlight.detail}</ScrambleText>
+                            </div>
+                        </div>
+                    ))}
+                </div>
                 <div className="container about-grid">
                     <div
                         className="about-intro-card"
@@ -291,9 +303,9 @@ export default function Home({ onOpenRegister }) {
                     <div>
                         <p className="eyebrow">05 / The next chapter</p>
                         <h2>
-                            Ready to{" "}
+                            Your next
                             <br />
-                            <em>enter?</em>
+                            <em>chapter starts here.</em>
                         </h2>
                         <ScrambleText>
                             Have a question? The organising team is here to
@@ -320,4 +332,3 @@ export default function Home({ onOpenRegister }) {
         </main>
     );
 }
-

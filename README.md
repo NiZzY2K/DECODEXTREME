@@ -52,9 +52,9 @@ Place portraits in `public/images/team/`. Missing or broken portraits show initi
 - Light surfaces only, shared container width and section spacing in `src/index.css`; hero, editorial section, mobile navigation and registration styles in `src/styles/experience.css`. Team-specific line animation and directory styles live in `src/pages/Team.css`.
 - Three fonts: Rajdhani headings, local Satoshi body, JetBrains Mono metadata. The two Google Fonts have local fallbacks.
 - Existing supplied logo assets in navigation and footer.
-- GSAP section reveals and hero transitions respect reduced-motion preferences. Body copy stays still for readability. The team page uses subtle CSS linework instead of the home artwork.
-- A short, skippable DNA helix preloader introduces the site, with a timeout to keep entry quick. The hero headline assembles letter by letter with cyan scan effects after it closes. Reduced-motion preferences keep both sequences still.
-- The hero includes the organiser logos within the first screen, allowing natural overflow on very short displays. Content sections and the footer use quiet, opaque light surfaces. On mobile, the session selector replaces the detailed map.
+- GSAP section reveals and hero transitions respect reduced-motion preferences. Descriptions reveal once with a brief text scramble, keeping the original accessible text and reserving its layout. The team page uses subtle CSS linework instead of the home artwork.
+- A short, skippable DNA helix preloader introduces the site, with a timeout to keep entry quick. The hero headline uses an Animus-inspired wireframe, fragmented letter assembly and a cyan scan after it closes. Reduced-motion preferences keep both sequences still.
+- The hero includes the organiser logos within the first screen, allowing natural overflow on very short displays. From About through the footer, a quiet animated geometric field connects the light sections. It pauses offscreen and respects reduced motion. On mobile, the session selector replaces the detailed map.
 - The supplied hero video plays muted without visible controls. It pauses offscreen and in background tabs; reduced-motion/data-saving preferences use a still image.
 - The supplied background music attempts to start after the intro at low volume. When browser autoplay is blocked, an Enable sound button lets visitors start it. A persistent sound control pauses/resumes music; background tabs pause it automatically.
 - Timeline is the single session directory; the duplicate ServicesSection is not rendered.
@@ -70,3 +70,5 @@ Older unused section components remain in the repository for reference, but are 
 ## Maintaining the refined interface
 
 See src/config/README.md for the content map. The mobile navigation uses a native modal dialog for focus containment, Escape handling and background scroll locking. It closes at the desktop breakpoint. Registration opens after the navigation has restored focus. Team filters remain horizontally scrollable on narrow displays. Registration dialogs scroll within the viewport.
+
+Home-only typography, floating navigation and editorial layout live in src/styles/home-editorial.css. Background motion lives in HomeAtmosphere.jsx and home-atmosphere.css. Shared components enable description motion only on the home route, preserving the team experience.

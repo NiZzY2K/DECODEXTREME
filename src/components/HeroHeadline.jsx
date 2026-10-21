@@ -37,7 +37,7 @@ export default function HeroHeadline() {
             stagger: { each: .055, from: 'center' }, ease: 'expo.out', clearProps: 'transform,opacity,filter' }, start + .45);
         sequence.fromTo(fragments,
           { x: i => i % 2 ? 40 : -40, y: i => i % 2 ? -3 : 3, opacity: .55 },
-          { x: 0, y: 0, opacity: 0, duration: .7, stagger: .07, ease: 'expo.inOut' }, start + .35);
+          { x: 0, y: 0, opacity: 0, duration: .7, stagger: .07, ease: 'expo.inOut', immediateRender: false }, start + .35);
         sequence.fromTo(scan,
           { yPercent: -15, opacity: 0 },
           { yPercent: 100, opacity: .7, duration: .9, ease: 'power2.inOut' }, start + .25);

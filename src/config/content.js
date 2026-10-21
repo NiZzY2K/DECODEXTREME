@@ -39,3 +39,10 @@ export const principles = [
         "Put your skills into practice in a nine-hour coding contest.",
     ],
 ];
+
+// Event facts shown between the cinematic hero and the programme overview.
+export const eventHighlights = [
+  { value: '03', label: 'Learning sessions', detail: 'Build your foundation' },
+  { value: '09', label: 'Hours of coding', detail: 'The PreXtreme challenge' },
+  { value: '03', label: 'People. One team.', detail: 'Find your rhythm together' },
+];
