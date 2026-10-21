@@ -4,70 +4,23 @@ import {
     ArrowDown,
     ArrowRight,
     ArrowUpRight,
-    Code2,
-    Users,
+
     Trophy,
     Plus,
     Minus,
     Mail,
 } from "lucide-react";
 import useReveal from "../hooks/useReveal";
+import { questions, principles } from '../config/content';
 import { event } from "../config/event";
 import TimelineFullscreenMap from "../components/TimelineFullscreenMap";
 import HeroBackdrop from "../components/HeroBackdrop";
+import ScrambleText from '../components/ScrambleText';
 import HeroHeadline from "../components/HeroHeadline";
-import ScrambleText from "../components/ScrambleText";
+
 import sbLogo from "../assets/sb-logo-color.webp";
 import csLogo from "../assets/IEEE-CS_LogoTM-orange.webp";
 
-const questions = [
-    [
-        "Who can join?",
-        "The three online learning sessions are open to everyone. The PreXtreme challenge is for currently registered SLTC undergraduates, in teams of exactly three.",
-    ],
-    [
-        "Do I need an IEEE membership?",
-        "No. DecodeXtreme sessions and the PreXtreme challenge are free to enter, with no IEEE membership required.",
-    ],
-    [
-        "What should I prepare?",
-        "Bring a laptop, a reliable internet connection, and a working HackerRank account. The challenge supports C++, Java, and Python. Check-in starts at 8 AM on 24 October.",
-    ],
-    [
-        "Can we use AI tools during the challenge?",
-        "Submitted solutions must be the original work of your registered team. Generative AI tools and collaboration with other teams are not permitted during the contest.",
-    ],
-    [
-        "How does scoring work?",
-        "Scores depend on test cases passed, with cumulative penalty time used to resolve ties. The organising team will share final contest instructions before the challenge.",
-    ],
-];
-const principles = [
-    [
-        Code2,
-        "Build your foundation",
-        "Turn programming concepts into confident problem solving.",
-    ],
-    [
-        Users,
-        "Find your rhythm",
-        "Think together, share the workload, and develop a team strategy.",
-    ],
-    [
-        Trophy,
-        "Rise to the challenge",
-        "Put your skills into practice in a nine-hour coding contest.",
-    ],
-];
-function SectionBridge() {
-    return (
-        <div className="section-bridge" aria-hidden="true">
-            <span />
-            <i />
-            <span />
-        </div>
-    );
-}
 function SectionHeading({ number, label, title, description, className = "" }) {
     return (
         <div className={`section-heading ${className}`} data-reveal>
@@ -113,7 +66,7 @@ export default function Home({ onOpenRegister }) {
                                     <ArrowUpRight size={18} />
                                 </button>
                                 <Link className="text-link" to="/#timeline">
-                                    Explore map  <ArrowDown size={16} />
+                                    Explore sessions  <ArrowDown size={16} />
                                 </Link>
                             </div>
                         </div>
@@ -144,10 +97,10 @@ export default function Home({ onOpenRegister }) {
                 aria-labelledby="about-title"
                 data-section
             >
-                <SectionBridge />
+
                 <div className="container about-grid">
                     <div
-                        className="about-intro-card animus-glass-card"
+                        className="about-intro-card"
                         data-reveal
                     >
                         <p className="eyebrow">
@@ -192,11 +145,7 @@ export default function Home({ onOpenRegister }) {
                         ))}
                     </div>
                 </div>
-                <div className="container scene-caption" aria-hidden="true">
-                    <span>THE SANCTUARY</span>
-                    <span>KNOWLEDGE IS YOUR FIRST WEAPON.</span>
-                    <span>01 / 05</span>
-                </div>
+
             </section>
 
             <section
@@ -204,10 +153,10 @@ export default function Home({ onOpenRegister }) {
                 className="section timeline-scene"
                 data-section
             >
-                <SectionBridge />
+
                 <div className="container">
                     <SectionHeading
-                        className="animus-glass-card"
+
                         number="02"
                         label="The mission map"
                         title={
@@ -228,10 +177,10 @@ export default function Home({ onOpenRegister }) {
             </section>
 
             <section id="prizes" className="section rewards-scene" data-section>
-                <SectionBridge />
+
                 <div className="container prizes-layout">
                     <SectionHeading
-                        className="animus-glass-card"
+
                         number="03"
                         label="Recognition"
                         title={
@@ -269,10 +218,10 @@ export default function Home({ onOpenRegister }) {
             </section>
 
             <section id="guide" className="section guide-scene" data-section>
-                <SectionBridge />
+
                 <div className="container guide-layout">
                     <SectionHeading
-                        className="animus-glass-card"
+
                         number="04"
                         label="Before you join"
                         title={
@@ -288,7 +237,7 @@ export default function Home({ onOpenRegister }) {
                         {questions.map(([question, answer], i) => (
                             <article
                                 key={question}
-                                className={`faq-item animus-glass-card ${openQuestion === i ? "is-active" : ""}`}
+                                className={`faq-item ${openQuestion === i ? "is-active" : ""}`}
                             >
                                 <h3>
                                     <button
@@ -321,7 +270,7 @@ export default function Home({ onOpenRegister }) {
                                     aria-labelledby={`question-${i}`}
                                     hidden={openQuestion !== i}
                                 >
-                                    <p>{answer}</p>
+                                    <ScrambleText active={openQuestion === i}>{answer}</ScrambleText>
                                 </div>
                             </article>
                         ))}
@@ -334,15 +283,15 @@ export default function Home({ onOpenRegister }) {
                 className="section contact-section contact-scene"
                 data-section
             >
-                <SectionBridge />
+
                 <div
-                    className="container contact-layout animus-glass-card"
+                    className="container contact-layout"
                     data-reveal
                 >
                     <div>
                         <p className="eyebrow">05 / The next chapter</p>
                         <h2>
-                            Ready to
+                            Ready to{" "}
                             <br />
                             <em>enter?</em>
                         </h2>
@@ -371,3 +320,4 @@ export default function Home({ onOpenRegister }) {
         </main>
     );
 }
+

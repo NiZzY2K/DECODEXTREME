@@ -11,64 +11,40 @@ export default function HeroHeadline() {
 
   useLayoutEffect(() => {
     const headline = headlineRef.current;
-    if (!ready || !headline) return undefined;
-
+    if (!ready || !headline) return;
     const media = gsap.matchMedia();
     media.add('(prefers-reduced-motion: no-preference)', () => {
-      // A restored deep link should not animate a headline already above the viewport.
-      if (headline.getBoundingClientRect().bottom <= 0) return undefined;
-
-      const timeline = gsap.timeline({
-        onStart: () => { headline.dataset.motion = 'assembling'; },
+      if (headline.getBoundingClientRect().bottom <= 0) return;
+      const sequence = gsap.timeline({
+        onStart: () => { headline.dataset.motion = 'synchronizing'; },
         onComplete: () => { delete headline.dataset.motion; },
       });
 
       headline.querySelectorAll('.hero-headline__line').forEach((line, lineIndex) => {
+        const start = lineIndex * .32;
         const letters = line.querySelectorAll('.hero-headline__letter');
-        const echoes = line.querySelectorAll('.hero-headline__echo');
+        const wireframe = line.querySelector('.hero-headline__wireframe');
+        const fragments = line.querySelectorAll('.hero-headline__fragment');
         const scan = line.querySelector('.hero-headline__scan');
-        const start = 0.12 + lineIndex * 0.24;
 
-        timeline.fromTo(letters, {
-          yPercent: 105,
-          rotationX: -85,
-          x: index => index % 2 ? 8 : -8,
-          opacity: 0,
-          willChange: 'transform,opacity',
-        }, {
-          yPercent: 0,
-          rotationX: 0,
-          x: 0,
-          opacity: 1,
-          duration: 0.78,
-          stagger: { each: 0.035, from: lineIndex === 1 ? 'end' : 'start' },
-          ease: 'power4.out',
-          clearProps: 'transform,opacity,willChange',
-        }, start);
-
-        // Two narrow signal echoes converge once, then leave the headline completely still.
-        timeline.fromTo(echoes, {
-          x: index => index === 0 ? -24 : 24,
-          opacity: 0.48,
-        }, {
-          x: 0,
-          opacity: 0,
-          duration: 0.55,
-          ease: 'expo.out',
-        }, start + 0.28);
-
-        timeline.fromTo(scan, { xPercent: -4, opacity: 0 }, {
-          xPercent: 103,
-          opacity: 0.75,
-          duration: 0.68,
-          ease: 'power2.inOut',
-        }, start + 0.1)
-          .to(scan, { opacity: 0, duration: 0.15 }, start + 0.74);
+        // Memory reconstruction: a wireframe resolves into separated type fragments.
+        sequence.fromTo(wireframe,
+          { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+          { opacity: .65, clipPath: 'inset(0 0% 0 0)', duration: .55, ease: 'power2.inOut' }, start);
+        sequence.fromTo(letters,
+          { opacity: 0, x: i => (i % 2 ? 1 : -1) * (16 + i * 3), y: i => i % 3 * 7 - 7, scale: .94, filter: 'blur(5px)' },
+          { opacity: 1, x: 0, y: 0, scale: 1, filter: 'blur(0px)', duration: .8,
+            stagger: { each: .055, from: 'center' }, ease: 'expo.out', clearProps: 'transform,opacity,filter' }, start + .45);
+        sequence.fromTo(fragments,
+          { x: i => i % 2 ? 40 : -40, y: i => i % 2 ? -3 : 3, opacity: .55 },
+          { x: 0, y: 0, opacity: 0, duration: .7, stagger: .07, ease: 'expo.inOut' }, start + .35);
+        sequence.fromTo(scan,
+          { yPercent: -15, opacity: 0 },
+          { yPercent: 100, opacity: .7, duration: .9, ease: 'power2.inOut' }, start + .25);
+        sequence.to([wireframe, scan], { opacity: 0, duration: .3 }, start + 1.2);
       });
-
       return () => { delete headline.dataset.motion; };
     }, headline);
-
     return () => media.revert();
   }, [ready]);
 
@@ -77,10 +53,12 @@ export default function HeroHeadline() {
       {words.map((word, lineIndex) => (
         <span className={`hero-headline__line${lineIndex === 2 ? ' hero-headline__line--accent' : ''}`} key={word} aria-hidden="true">
           <span className="hero-headline__word">
-            {[...word].map((letter, index) => <span className="hero-headline__letter" key={`${word}-${index}`}>{letter}</span>)}
+            {[...word].map((letter, index) => <span className="hero-headline__letter" key={index}>{letter}</span>)}
           </span>
-          <span className="hero-headline__echo hero-headline__echo--upper">{word}</span>
-          <span className="hero-headline__echo hero-headline__echo--lower">{word}</span>
+          <span className="hero-headline__wireframe">{word}</span>
+          <span className="hero-headline__fragment hero-headline__fragment--upper">{word}</span>
+          <span className="hero-headline__fragment hero-headline__fragment--middle">{word}</span>
+          <span className="hero-headline__fragment hero-headline__fragment--lower">{word}</span>
           <span className="hero-headline__scan" />
         </span>
       ))}

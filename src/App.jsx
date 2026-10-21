@@ -4,11 +4,11 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import HomeAtmosphere from './components/HomeAtmosphere';
 import Home from './pages/Home';
 import RegistrationModal from './components/RegistrationModal';
 import Preloader from './components/Preloader';
 import AmbientAudio from './components/AmbientAudio';
-import AnimusGlobalBackground from './components/AnimusGlobalBackground';
 import MotionReadyContext from './context/MotionReadyContext';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,8 +16,9 @@ gsap.registerPlugin(ScrollTrigger);
 const Team = lazy(() => import('./pages/Team'));
 
 export default function App() {
+  const location = useLocation();
   const [registration, setRegistration] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => location.pathname === '/');
 
   const completeLoading = useCallback(() => {
     setIsLoading(false);
@@ -36,8 +37,6 @@ export default function App() {
     return () => { document.body.style.overflow = previous; };
   }, [isLoading]);
 
-  const location = useLocation();
-
   useEffect(() => {
     document.title = `${location.pathname === '/team' ? 'Our team' : 'Think. Solve. Compete.'} | DecodeXtreme 2026`;
     const frame = requestAnimationFrame(() => {
@@ -53,10 +52,10 @@ export default function App() {
 
   return (
     <MotionReadyContext.Provider value={!isLoading}>
-      <AnimusGlobalBackground />
-      <div inert={isLoading} aria-hidden={isLoading || undefined} style={{ position: 'relative', zIndex: 1 }}>
+      <div className={location.pathname === '/' ? 'home-shell' : undefined} inert={isLoading} aria-hidden={isLoading || undefined} style={{ position: 'relative', zIndex: 1 }}>
         <a className="skip-link" href="#main">Skip to content</a>
         <Navbar onOpenRegister={() => openRegister()} />
+        {location.pathname === '/' && <HomeAtmosphere />}
         <Suspense fallback={<main id="main" className="page-loading" aria-busy="true">Loading the team…</main>}>
           <Routes>
             <Route path="/" element={<Home onOpenRegister={openRegister} />} />
@@ -64,8 +63,8 @@ export default function App() {
             <Route path="*" element={<main id="main" className="page-intro container"><p className="eyebrow">404 / Off the map</p><h1>Let’s find your way back.</h1><Link className="button" to="/">Back to home</Link></main>} />
           </Routes>
         </Suspense>
-        <Footer onOpenRegister={() => openRegister()} />
-        {registration && <RegistrationModal type={registration} onClose={() => setRegistration(null)} />}
+        <Footer animateDescriptions={location.pathname === '/'} onOpenRegister={() => openRegister()} />
+        {registration && <RegistrationModal animateDescriptions={location.pathname === '/'} type={registration} onClose={() => setRegistration(null)} />}
         <AmbientAudio enabled={!isLoading} />
       </div>
       {isLoading && <Preloader onComplete={completeLoading} />}

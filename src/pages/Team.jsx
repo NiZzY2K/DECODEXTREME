@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Linkedin, Users, Search } from "lucide-react";
 import { sectionsAndInfo } from "../config/team";
+import './Team.css';
 import useReveal from "../hooks/useReveal";
-import ScrambleText from "../components/ScrambleText";
+
 
 function MemberCard({ member }) {
     const [failed, setFailed] = useState(false);
@@ -81,7 +82,7 @@ export default function Team() {
     const hasResults = visible.some((group) => group.members.length);
     return (
         <main id="main" ref={root} className="team-page">
-            <div className="team-scene" data-section>
+            <div className="team-scene" data-section><div className="team-linework" aria-hidden="true"><span /><span /><span /><span /></div>
                 <header className="container page-intro" data-reveal>
                     <Link className="text-link back-link" to="/">
                         ← Back to the experience
@@ -92,10 +93,10 @@ export default function Team() {
                         <br />
                         <em>Behind the mission.</em>
                     </h1>
-                    <ScrambleText className="section-description">
+                    <p className="section-description">
                         The organisers, builders, and ambassadors behind
                         DecodeXtreme. One crew. One shared mission.
-                    </ScrambleText>
+                    </p>
                 </header>
             </div>
             <div className="container team-directory">
