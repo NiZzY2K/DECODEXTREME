@@ -1,8 +1,0 @@
-.scramble-text__word { position: relative; display: inline-block; }
-.scramble-text__visual { position: absolute; inset: 0; white-space: nowrap; overflow: hidden; opacity: 0; pointer-events: none; color: var(--color-accent-ink); }
-.scramble-text[data-scrambling="true"] .scramble-text__source { opacity: 0; }
-.scramble-text[data-scrambling="true"] .scramble-text__visual { opacity: 1; }
-@media (prefers-reduced-motion: reduce) {
-  .scramble-text__source { opacity: 1 !important; }
-  .scramble-text__visual { display: none; }
-}
