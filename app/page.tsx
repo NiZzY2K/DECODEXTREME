@@ -1,10 +1,5 @@
+import Awaken from "./components/Awaken";
 
 export default function Home() {
-  return (
-    <div className="">
-      <main className="">
-        home
-      </main>
-    </div>
-  );
+  return <main id="main-content"><Awaken /></main>;
 }

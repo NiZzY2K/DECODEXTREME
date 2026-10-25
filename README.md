@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DecodeXtreme 2026
 
-## Getting Started
+Next.js implementation of the **Awaken hero and navigation only**, using the supplied rebuild plan and video.
 
-First, run the development server:
+## Development
 
-```bash
+Use Node.js 20.9+ (the workspace has Node 24 through nvm).
+
+~~~sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+~~~
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. Production verification: npm run build.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Hero behavior
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The opening poster is the exact first frame of the supplied video. Scroll advances or reverses a pinned canvas sequence. The headline reconstructs in three stages, fades as the camera moves closer, and reveals the final calls to action after 80% progress.
 
-## Learn More
+Navigation reveals with the first scroll. Desktop navigation stays transparent. Mobile navigation uses white frosted glass, and its open menu covers the viewport, hides hero controls, and locks page scrolling until closed. The hero uses the original directional Ice White gradients, with dark navy text and teal accents. The closing invitation fades into a pale veil. Register opens a keyboard-accessible dialog. Links to unbuilt chapters show a coming-soon notice; no other sections or team page were built in this pass.
 
-To learn more about Next.js, take a look at the following resources:
+Reduced-motion and data-saver visitors get the poster and visible content without pinning or frame downloads. Mobile uses a shorter scroll and a portrait sequence. Decoded frames use a bounded moving cache; the remaining compressed files prefetch when the browser is idle.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Configuration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+app/config/index.ts owns copy, links, asset paths, frame counts, and scroll timings. Scroll animation is owned by GSAP/ScrollTrigger, smooth scrolling by Lenis, and the final invitation's state reveal by Motion.
 
-## Deploy on Vercel
+Hero assets:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variant | Frames | Dimensions | Total |
+| --- | ---: | --- | ---: |
+| Desktop | 150 | 1152 x 648 | 4.40 MB |
+| Mobile | 120 | 450 x 800 | 1.62 MB |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The source video and original artwork are preserved. To regenerate the delivery assets with Python 3 and FFmpeg:
+
+~~~sh
+python scripts/prepare-hero.py
+~~~
+
+Use --ffmpeg /path/to/ffmpeg if it is not on PATH. If export settings change, update the counts in app/config/index.ts.
+
+
+

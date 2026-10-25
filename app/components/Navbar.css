@@ -1,0 +1,98 @@
+.site-header {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto;
+  color: var(--deep-navy, #081922);
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition: opacity 650ms ease, transform 650ms ease, background-color 500ms ease, border-color 500ms ease, backdrop-filter 500ms ease, visibility 650ms;
+}
+.site-header.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.site-header.is-glass { background: transparent; border-bottom-color: transparent; backdrop-filter: none;  }
+.nav-inner { min-height: 100px; max-width: 1800px; padding: 0 clamp(24px, 4.2vw, 80px); margin: 0 auto; display: flex; align-items: center; gap: 44px; }
+.nav-brand { display: block; width: clamp(160px, 14.6vw, 220px); flex: 0 0 auto; line-height: 0; }
+.nav-brand img { display: block; width: 100%; height: auto; }
+.nav-desktop { margin-left: auto; }
+.nav-links { display: flex; align-items: center; gap: clamp(24px, 2.7vw, 46px); list-style: none; padding: 0; margin: 0; }
+.nav-links a { position: relative; display: inline-block; padding: 12px 0; color: inherit; text-decoration: none; font-size: 13px; font-weight: 650; letter-spacing: .025em; }
+.nav-links a::after { content: ""; position: absolute; bottom: 5px; left: 0; width: 100%; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 220ms ease; }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-actions { display: flex; align-items: center; gap: 14px; }
+.nav-register { display: inline-flex; align-items: center; justify-content: center; gap: 30px; min-height: 44px; padding: 0 20px; border: 1px solid rgb(8 25 34 / 36%); color: inherit; background: transparent; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .045em; transition: background 220ms ease, border-color 220ms ease; }
+.nav-register:hover { background: var(--decode-cyan, #08d1d8); border-color: var(--decode-cyan, #08d1d8); }
+.nav-register svg { width: 14px; height: 14px; }
+.nav-menu-toggle { display: none; }
+.nav-mobile { display: none; }
+.site-header a:focus-visible, .site-header button:focus-visible, .registration-dialog a:focus-visible, .registration-dialog button:focus-visible { outline: 2px solid var(--signal-teal, #087e87); outline-offset: 6px; }
+.nav-notice { position: fixed; z-index: 70; left: 50%; bottom: 32px; display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100vw - 40px); padding: 15px 22px; border: 1px solid rgb(8 25 34 / 14%); background: rgb(244 250 251 / 94%); color: var(--deep-navy, #081922); box-shadow: 0 12px 50px rgb(8 25 34 / 12%); backdrop-filter: blur(16px); font-size: 12px; line-height: 1.6; opacity: 0; transform: translate(-50%, 15px); pointer-events: none; transition: opacity 250ms ease, transform 250ms ease; }
+.nav-notice.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.nav-notice-dot { width: 5px; height: 5px; flex: 0 0 auto; border-radius: 50%; background: var(--signal-teal, #087e87); }
+.registration-dialog { position: fixed; inset: 0; width: min(540px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; margin: auto; border: 1px solid rgb(8 25 34 / 15%); background: var(--ice-white, #f4fafb); color: var(--deep-navy, #081922); box-shadow: 0 32px 120px rgb(5 9 13 / 24%); overflow: auto; }
+.registration-dialog::backdrop { background: rgb(8 25 34 / 40%); backdrop-filter: blur(12px); }
+.registration-content { position: relative; padding: 48px 40px 32px; }
+.registration-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; padding: 6px; border: 1px solid transparent; background: transparent; color: inherit; cursor: pointer; }
+.registration-close:hover { border-color: rgb(8 25 34 / 25%); }
+.registration-close svg { width: 20px; height: 20px; }
+.registration-eyebrow { margin: 0 0 22px; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--signal-teal, #087e87); font-weight: 700; }
+.registration-content h2 { margin: 0; font-size: clamp(34px, 6vw, 44px); font-weight: 650; letter-spacing: -.055em; line-height: 1.08; }
+.registration-description { margin: 17px 0 30px; font-size: 14px; line-height: 1.7; color: var(--tech-teal-black, #0b2a30); }
+.registration-closed { border-top: 1px solid rgb(8 25 34 / 16%); padding: 20px 0; }
+.registration-small-label { display: block; font-size: 9px; font-weight: 700; line-height: 1.6; letter-spacing: .12em; text-transform: uppercase; color: var(--signal-teal, #087e87); }
+.registration-closed p { font-size: 12px; line-height: 1.7; margin: 7px 0 0; color: var(--tech-teal-black, #0b2a30); }
+.registration-card { padding: 25px; border: 1px solid rgb(8 25 34 / 16%); background: rgb(255 255 255 / 55%); }
+.registration-card h3 { margin: 12px 0 7px; font-size: 26px; line-height: 1.2; font-weight: 650; letter-spacing: -.035em; }
+.registration-card p { margin: 0; font-size: 13px; line-height: 1.7; color: var(--tech-teal-black, #0b2a30); }
+.registration-cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 24px; min-height: 48px; padding: 12px 16px; color: var(--deep-navy, #081922); background: var(--decode-cyan, #08d1d8); text-decoration: none; font-size: 12px; font-weight: 700; transition: background 200ms ease; }
+.registration-cta:hover { background: var(--electric-aqua, #3eebf0); }
+.registration-cta svg { width: 14px; height: 14px; flex: 0 0 auto; }
+.registration-help { display: block; width: fit-content; margin: 22px auto 0; font-size: 11px; text-decoration: none; text-underline-offset: 4px; color: var(--signal-teal, #087e87); }
+.registration-help:hover { text-decoration: underline; }
+@media (max-width: 1100px) { .nav-inner { gap: 28px; } .nav-links { gap: 24px; } .nav-register { gap: 20px; } }
+@media (max-width: 800px) {
+  .site-header, .site-header.is-glass {
+    color: var(--deep-navy, #081922);
+    background: rgb(244 250 251 / 18%);
+    border-bottom-color: rgb(8 25 34 / 14%);
+    backdrop-filter: blur(18px) saturate(120%);
+    
+    text-shadow: none;
+  }
+  .site-header.is-menu-open {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    background: rgb(244 250 251 / 26%);
+    backdrop-filter: blur(32px) saturate(120%);
+    
+  }
+  .site-header.is-menu-open .nav-inner { flex: 0 0 auto; width: 100%; }
+  .nav-inner { min-height: 80px; padding: 0 22px; gap: 16px; justify-content: space-between; }
+  .nav-brand { width: 150px; }
+  .nav-desktop { display: none; }
+  .nav-actions { margin-left: auto; gap: 12px; }
+  .nav-register { min-height: 38px; padding: 0 13px; font-size: 10px; gap: 14px; }
+  .nav-register svg { width: 11px; height: 11px; }
+  .nav-menu-toggle { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; width: 36px; height: 40px; padding: 7px; background: transparent; border: 0; color: inherit; cursor: pointer; }
+  .nav-menu-toggle span { display: block; width: 22px; height: 1px; background: currentColor; transition: transform 220ms ease; }
+  .nav-menu-toggle.is-open span:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .nav-menu-toggle.is-open span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .nav-mobile:not([hidden]) { display: grid; flex: 1 1 auto; min-height: 0; align-content: start; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; padding: 6px 22px max(24px, env(safe-area-inset-bottom)); border-top: 1px solid rgb(8 25 34 / 14%); }
+  .nav-mobile a { display: grid; grid-template-columns: 30px 1fr 20px; align-items: center; gap: 12px; padding: 18px 2px; color: inherit; text-decoration: none; border-bottom: 1px solid rgb(8 25 34 / 14%); font-size: 24px; font-weight: 500; letter-spacing: -.03em; }
+  .nav-mobile-number { font-size: 9px; font-weight: 700; letter-spacing: .04em; color: rgb(8 25 34 / 68%); }
+  .nav-mobile svg { width: 18px; height: 18px; }
+  .nav-notice { bottom: 22px; font-size: 11px; padding: 13px 17px; }
+}
+@media (max-width: 380px) { .nav-inner { padding: 0 16px; gap: 8px; } .nav-brand { width: 132px; } .nav-actions { gap: 6px; } .nav-register { padding: 0 11px; gap: 10px; } .registration-content { padding: 48px 24px 26px; } .registration-card { padding: 20px; } }
+@media (prefers-reduced-motion: reduce) { .site-header, .nav-links a::after, .nav-register, .nav-menu-toggle span, .nav-notice, .registration-cta { transition: none; } }
+
+
+
+
+
+
+
+
